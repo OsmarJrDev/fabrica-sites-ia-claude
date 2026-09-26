@@ -1,0 +1,21 @@
+# Cada cliente tem seu próprio repositório (ver docs/dominios.csv).
+# Este repositório é só a fábrica: regras, skills, docs e o template _base.
+clientes/
+
+# build e cache
+node_modules/
+dist/
+.astro/
+.lighthouseci/
+qa/
+
+# logs
+npm-debug.log*
+
+# ambiente
+.env
+.env.production
+.dev.vars
+
+.DS_Store
+.idea/

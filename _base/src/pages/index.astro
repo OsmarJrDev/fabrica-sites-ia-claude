@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/sections/Hero.astro';
+import Servicos from '../components/sections/Servicos.astro';
+import Sobre from '../components/sections/Sobre.astro';
+import Diferenciais from '../components/sections/Diferenciais.astro';
+import Depoimentos from '../components/sections/Depoimentos.astro';
+import Faq from '../components/sections/Faq.astro';
+import Contato from '../components/sections/Contato.astro';
+---
+
+<Base>
+  <Hero
+    variante="editorial"
+    chamada="Cuidado médico completo, perto de você"
+    subtitulo="Consultas com especialidades variadas, agenda flexível e atendimento humanizado do início ao fim (site de demonstração)."
+  />
+  <Servicos variante="grade" />
+  <Sobre
+    variante="filete"
+    titulo="Sobre a clínica"
+    texto="A DEMO Clínica Exemplo reúne profissionais de diferentes especialidades em um único endereço, com foco em um atendimento próximo e sem burocracia. Todo o conteúdo desta página é fictício, criado apenas para demonstrar a estrutura do site."
+  />
+  <Diferenciais variante="linha" />
+  <Depoimentos variante="grade" />
+  <Faq variante="acordeao" />
+  <Contato variante="mapa-lado" />
+</Base>

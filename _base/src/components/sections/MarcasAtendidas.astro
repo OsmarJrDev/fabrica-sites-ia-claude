@@ -1,0 +1,32 @@
+---
+// Lista de marcas atendidas/trabalhadas, em texto (estilo logotipo). So
+// aparece com marcas confirmadas pelo cliente em site.marcasAtendidas. Sem
+// arquivo de logo real disponivel para nenhum cliente ate agora: quando
+// houver, adicionar <Image /> aqui a partir de src/assets (nunca banco de
+// imagem generico), sem alterar a validacao de prova real.
+import { site } from '../../data/site';
+
+interface Props {
+  titulo?: string;
+}
+
+const { titulo = 'Marcas atendidas' } = Astro.props;
+const marcas = site.marcasAtendidas ?? [];
+---
+
+{
+  marcas.length > 0 && (
+    <section class="border-t border-linha bg-white/40" aria-labelledby="marcas-titulo">
+      <div class="mx-auto max-w-6xl px-6 py-16 md:py-24">
+        <h2 id="marcas-titulo" class="font-titulo text-3xl font-semibold text-base md:text-4xl">
+          {titulo}
+        </h2>
+        <ul class="mt-8 flex flex-wrap items-center gap-x-10 gap-y-4">
+          {marcas.map((marca) => (
+            <li class="font-titulo text-lg font-semibold text-texto/70">{marca.nome}</li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}

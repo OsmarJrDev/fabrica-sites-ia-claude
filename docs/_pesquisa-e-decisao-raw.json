@@ -1,0 +1,1421 @@
+{
+ "decisao": {
+  "stack": [
+   {
+    "camada": "Node e gerenciador de pacotes",
+    "escolha": "Node.js 24 LTS + npm (vem junto com o Node)",
+    "versao": "Node 24 (LTS atual oferecida: v24.21.0; máquina do usuário tem v24.16.0, atualizar). npm >=9.6.5 exigido pelo Astro",
+    "porque": "Astro 7.3.5 exige node >=22.12.0 (confirmado no npm). Node 24 é a LTS ativa, entra em manutenção em 20/10/2026 e tem suporte até 30/04/2028 (confirmado no schedule.json). npm evita o bloqueio ERR_PNPM_IGNORED_BUILDS e a falta de Corepack no Node 25+ (não confirmado, mas é atrito desnecessário). Rodar npm config set save-exact true.",
+    "alternativas": "pnpm (engines do Astro aceitam pnpm >=7.1.0, mas mais atrito no Windows); Node 26 quando virar LTS em 28/10/2026",
+    "confianca": 0.9
+   },
+   {
+    "camada": "Linguagem",
+    "escolha": "HTML semântico + CSS + TypeScript leve (tipar props e o arquivo de dados do cliente), dentro de componentes .astro",
+    "versao": "TypeScript como devDependency, preset 'strict' do Astro",
+    "porque": "Astro já vem com TypeScript e recomenda rodar astro check antes do build. Tipar só props e dados pega erro de conteúdo sem complicar para iniciante.",
+    "alternativas": "JavaScript puro (perde a checagem de dados do cliente)",
+    "confianca": 0.85
+   },
+   {
+    "camada": "Framework",
+    "escolha": "Astro em modo estático (sem adapter)",
+    "versao": "7.3.5 (confirmado no npm em 25/09/2026)",
+    "porque": "Zero JS no cliente por padrão (ilhas só com client:*). Melhor taxa de Core Web Vitals entre frameworks JS nos dados do HTTP Archive, inclusive no Brasil (44,0% contra 18,9% do Next.js), dado não reconfirmado na verificação e observacional. Imagens, fontes, sitemap nativos e template reaproveitável com create-astro --template.",
+    "alternativas": "Eleventy 3.1.6 (ótimo CWV, comunidade menor); SvelteKit 2.70.3 com adapter-static",
+    "confianca": 0.85
+   },
+   {
+    "camada": "CSS",
+    "escolha": "Tailwind CSS 4 via plugin oficial @tailwindcss/vite (npx astro add tailwind), tokens em @theme dentro de src/styles/global.css",
+    "versao": "tailwindcss 4.3.3 (confirmado)",
+    "porque": "Configuração no próprio CSS, cada cliente troca só o bloco @theme (cores, fontes, raio). Proibir tailwind.config.js, @astrojs/tailwind e diretivas @tailwind da v3 no CLAUDE.md.",
+    "alternativas": "CSS puro com custom properties (mais controle, mais código para a IA manter)",
+    "confianca": 0.85
+   },
+   {
+    "camada": "Componentes",
+    "escolha": "Componentes .astro próprios no template base (Hero, Serviços, Sobre, Diferenciais, Depoimentos, FAQ, Contato/Mapa, Rodapé legal BR e PT), com variantes por nicho",
+    "versao": "não se aplica (código do próprio template)",
+    "porque": "Kit pronto sem customização traz cara de template. Componentes próprios com tokens deixam a IA trocar só dados, tema e variante, sem reescrever a estrutura.",
+    "alternativas": "Starwind, daisyUI, Flowbite, Preline (versões e compatibilidade com Tailwind 4 não verificadas)",
+    "confianca": 0.75
+   },
+   {
+    "camada": "Tipografia e fontes",
+    "escolha": "Fonts API nativa do Astro, fontes auto-hospedadas (provedores Fontsource ou Google baixados no build), no máximo 2 famílias por site",
+    "versao": "Embutida no Astro (versão exata em que ficou estável não confirmada)",
+    "porque": "Serve as fontes pelo próprio domínio, com preload e fallback, ajuda LCP e CLS e evita chamar servidor de terceiro (leitura de RGPD é estimativa). Skill frontend-design confirma 1 ou 2 famílias distintas e linhas com menos de 80 caracteres.",
+    "alternativas": "@fontsource manual; link direto ao Google Fonts (evitar em PT)",
+    "confianca": 0.75
+   },
+   {
+    "camada": "Ícones",
+    "escolha": "Lucide via astro-icon (SVG inline no build)",
+    "versao": "não verificado nesta pesquisa",
+    "porque": "Ícone vira SVG estático, sem JS. Evita emoji no lugar de ícone.",
+    "alternativas": "Phosphor; SVG copiado à mão",
+    "confianca": 0.55
+   },
+   {
+    "camada": "Animação",
+    "escolha": "CSS puro + View Transitions nativas entre páginas (@view-transition { navigation: auto; }), sempre com prefers-reduced-motion. GSAP só em uma seção de destaque",
+    "versao": "GSAP 3.15.0 (versão confirmada; licença Standard confirmada: gratuita, proíbe só criar ferramenta visual concorrente da Webflow)",
+    "porque": "Skill frontend-design recomenda um momento orquestrado em vez de efeitos espalhados. View Transitions não animam em todo navegador, então não podem ser essenciais. Evitar <ClientRouter /> sem motivo.",
+    "alternativas": "Motion (não verificado)",
+    "confianca": 0.8
+   },
+   {
+    "camada": "Imagens",
+    "escolha": "Arquivos em src/assets com <Image /> e <Picture /> do Astro (sharp, AVIF/WebP, srcset). Nunca em public/",
+    "versao": "Embutido no Astro 7",
+    "porque": "Imagens em public/ nunca são otimizadas, erro comum da IA. Fotos reais do cliente com tratamento de cor igual; IA só para imagem ilustrativa, nunca como 'nossa equipe'.",
+    "alternativas": "Cloudinary (custo e dependência externa)",
+    "confianca": 0.85
+   },
+   {
+    "camada": "Formulários",
+    "escolha": "Padrão: botão wa.me com mensagem pré-preenchida + tel: clicável. Formulário opcional via Web3Forms (uma chave por cliente) com página de agradecimento própria",
+    "versao": "Serviço externo; preços e limites do Web3Forms NÃO confirmados (página deu 403)",
+    "porque": "WhatsApp é o canal principal no BR (82% falam com marcas pelo app, confirmado). Formulário mínimo (nome, contato, mensagem) com link para a política.",
+    "alternativas": "Endpoint próprio num Cloudflare Worker + Turnstile + e-mail transacional; Netlify Forms em plano pago; Formspree (limites não verificados)",
+    "confianca": 0.55
+   },
+   {
+    "camada": "Anti-spam",
+    "escolha": "Honeypot em todo formulário + Cloudflare Turnstile quando o backend permitir",
+    "versao": "Turnstile Free (limites de 20 widgets e 10 hostnames por widget não verificados)",
+    "porque": "Barato, sem cookies de rastreamento conhecidos, evita CAPTCHA pesado.",
+    "alternativas": "hCaptcha incluído no Web3Forms Free (não confirmado); reCAPTCHA",
+    "confianca": 0.6
+   },
+   {
+    "camada": "Hospedagem",
+    "escolha": "Cloudflare Workers com static assets, conta da agência, um Worker por cliente, deploy via GitHub (Workers Builds) e preview URL para aprovação",
+    "versao": "Plano Free; Workers Paid tem mínimo de US$ 5/mês",
+    "porque": "Requisições a arquivos estáticos são gratuitas e ilimitadas no Free e no Paid (confirmado). A própria Cloudflare manda começar projetos novos em Workers, não Pages. Netlify Free divide 300 créditos entre todos os sites e pausa todos quando acaba (confirmado).",
+    "alternativas": "Netlify Personal US$ 9/mês ou Pro (confirmado), que o usuário já conhece; Vercel só no Pro (Hobby proíbe uso comercial, confirmado)",
+    "confianca": 0.75
+   },
+   {
+    "camada": "Domínio",
+    "escolha": "Domínio sempre em nome do cliente: Registro.br (.com.br) no BR e registrador .pt em PT; agência como contato técnico/administrativo, DNS apontado para a Cloudflare",
+    "versao": "não se aplica",
+    "porque": "Evita disputa quando o cliente sai. No .pt, novas regras de validação do titular (não verificadas) exigem que o cliente confirme e-mail e telefone.",
+    "alternativas": "Registrar na conta do cliente com acesso delegado",
+    "confianca": 0.8
+   },
+   {
+    "camada": "Analytics",
+    "escolha": "Cloudflare Web Analytics (sem cookies)",
+    "versao": "Gratuito, limite flexível de 10 sites por conta (não verificado)",
+    "porque": "Sem cookies nem localStorage, reduz a necessidade de banner. Em PT, 'sem cookies' ajuda mas não garante dispensa de consentimento.",
+    "alternativas": "Plausible (pago); Umami Cloud Hobby; GA4 só com banner",
+    "confianca": 0.6
+   },
+   {
+    "camada": "CMS opcional",
+    "escolha": "Nenhum por padrão (manutenção mensal feita por você com a IA). Se o cliente precisar editar cardápio ou preços: Pages CMS editando só JSON/Markdown",
+    "versao": "Pages CMS (versão não verificada)",
+    "porque": "Mantém o site 100% estático e o visual protegido. Git Gateway da Netlify está descontinuado e Keystatic no Astro exige servidor (não verificados).",
+    "alternativas": "Decap CMS; Sveltia (beta)",
+    "confianca": 0.5
+   },
+   {
+    "camada": "SEO",
+    "escolha": "Componente SEO único (title, description, canonical, OG 1200x630 JPEG abaixo de 200 KB, og:locale) + JSON-LD LocalBusiness com subtipo gerado do arquivo de dados + @astrojs/sitemap + robots.txt + 404",
+    "versao": "@astrojs/sitemap (versão não verificada)",
+    "porque": "Google exige name e address no LocalBusiness e recomenda telephone, horários e geo (confirmado). FAQ rich result acabou em 07/05/2026 (confirmado). og:image abaixo de 600 KB pela Meta (confirmado). Mesmo arquivo de dados alimenta rodapé e schema, garantindo NAP idêntico.",
+    "alternativas": "astro-seo (não verificado)",
+    "confianca": 0.85
+   },
+   {
+    "camada": "QA automatizado",
+    "escolha": "npm run build com 'astro check && astro build' + Chrome DevTools MCP (já no ECC: lighthouse_audit, take_screenshot, resize_page, performance trace) em 375/768/1440",
+    "versao": "@astrojs/check e typescript como devDependencies",
+    "porque": "O compilador do Astro 7 recusa HTML malformado (não confirmado na verificação), então o build vira o primeiro portão. O MCP de DevTools já está ativo no ambiente (confirmado).",
+    "alternativas": "Playwright MCP; PageSpeed Insights manual",
+    "confianca": 0.8
+   },
+   {
+    "camada": "Versionamento",
+    "escolha": "Git + GitHub com repositório privado por cliente e um repositório template-base",
+    "versao": "Git 2.54.0 instalado (atual 2.55.0 via winget install --id Git.Git -e --source winget); instalar GitHub CLI",
+    "porque": "GitHub Free tem privados ilimitados. Substitui o OneDrive como backup e conecta direto ao deploy da Cloudflare.",
+    "alternativas": "GitLab",
+    "confianca": 0.9
+   },
+   {
+    "camada": "Documentação para a IA",
+    "escolha": "MCP oficial de docs do Astro + CLAUDE.md com regras de versão",
+    "versao": "claude mcp add --transport http astro-docs https://mcp.docs.astro.build/mcp (endereço não verificado; llms.txt do Astro retorna 404, confirmado)",
+    "porque": "Astro teve duas majors em 3 meses. Modelos geram <ViewTransitions />, Astro.glob, src/content/config.ts e Tailwind v3. O CLAUDE.md fixa o certo.",
+    "alternativas": "Colar trechos da doc manualmente",
+    "confianca": 0.7
+   }
+  ],
+  "descartados": [
+   {
+    "opcao": "Next.js (export estático)",
+    "motivo": "No export perde next/image padrão, redirects, headers e ISR; mediana de 833 KB de JS e pior taxa de CWV no Brasil (18,9%). Só vale para app com login."
+   },
+   {
+    "opcao": "HTML + Tailwind sem framework",
+    "motivo": "Sem componentes, layouts, otimização de imagem, sitemap e i18n. Com IA vira cópia divergente entre páginas. Aceitável só para landing de uma página (estimativa)."
+   },
+   {
+    "opcao": "WordPress e construtores (Wix, Hostinger)",
+    "motivo": "Mensalidade de plataforma, pouca diferenciação e o produto do usuário é justamente o site sob medida. Wix tem bom CWV, mas é concorrente, não ferramenta."
+   },
+   {
+    "opcao": "Vercel Hobby",
+    "motivo": "Proíbe uso comercial, inclusive receber para criar ou hospedar site (confirmado). Pro custa US$ 20 por assento."
+   },
+   {
+    "opcao": "GitHub Pages",
+    "motivo": "Não pode ser usado para negócio online e no Free exige repositório público (não reverificado, mas risco alto)."
+   },
+   {
+    "opcao": "Netlify Free para a carteira",
+    "motivo": "300 créditos compartilhados; ao acabar, pausa todos os sites do time (confirmado)."
+   },
+   {
+    "opcao": "pnpm",
+    "motivo": "Atrito com strictDepBuilds, Defender e Corepack ausente no Node 25+; npm resolve sem custo."
+   },
+   {
+    "opcao": "@astrojs/tailwind e tailwind.config.js",
+    "motivo": "Legado do Tailwind 3; na v4 a configuração vai em @theme."
+   },
+   {
+    "opcao": "<ClientRouter /> por padrão",
+    "motivo": "Transforma o site em SPA e exige reinicializar scripts; View Transitions nativas bastam."
+   },
+   {
+    "opcao": "Keystatic e TinaCloud",
+    "motivo": "Keystatic exige servidor no Astro; TinaCloud cobra por projeto (não verificados)."
+   },
+   {
+    "opcao": "Google Fonts via link, embeds de Maps e YouTube diretos",
+    "motivo": "Chamam terceiros no carregamento e podem exigir banner de cookies, principalmente em PT."
+   },
+   {
+    "opcao": "i18n com domains ou caminhos customizados do Astro",
+    "motivo": "Exigem output server; em site estático usar locales simples ('pt-br', 'pt-pt') ou, melhor, um projeto por país."
+   },
+   {
+    "opcao": "Trabalhar dentro do OneDrive",
+    "motivo": "Microsoft recomenda até 300 mil itens sincronizados e node_modules tem dezenas de milhares; risco de EPERM/EBUSY e conflitos (bug do pnpm #7592). Caminho com espaço e acento."
+   },
+   {
+    "opcao": "FAQ schema como argumento de venda",
+    "motivo": "Rich result de FAQ deixou de aparecer em 07/05/2026 (confirmado)."
+   }
+  ],
+  "estrutura_projeto": "Pasta raiz FORA do OneDrive (sem espaço e sem acento): C:\\Users\\osmar\\fabrica-sites-ia\n\nC:\\Users\\osmar\\fabrica-sites-ia\\\n  CLAUDE.md                  (regras gerais da fábrica: stack travada, anti-padrões visuais, regras de texto, portões de QA. Vale para todas as subpastas, porque o Claude Code carrega o CLAUDE.md da pasta atual e das pastas acima)\n  .claude\\\n    skills\\\n      novo-cliente\\SKILL.md       (copia o template, preenche site.ts a partir do briefing, cria repo)\n      direcao-visual\\SKILL.md     (escolhe paleta e par de fontes do nicho, gera bloco @theme)\n      textos-nicho\\SKILL.md       (escreve textos seguindo locale pt-BR ou pt-PT e regras setoriais)\n      qa-entrega\\SKILL.md         (build, screenshots 375/768/1440, lighthouse_audit, checklist legal)\n    settings.json               (permissões de npm, git e MCP de DevTools)\n  docs\\\n    nichos\\clinica.md, dentista.md, advocacia.md ... (playbook de cada nicho: seções, CTA, paleta, fontes, schema, regras do conselho)\n    locale\\pt-BR.md e pt-PT.md   (vocabulário, formatos de telefone, CEP/código postal, CNPJ/NIF, tratamento)\n    legal\\rodape-br.md, rodape-pt.md, politica-privacidade-modelo-br.md, politica-privacidade-modelo-pt.md (modelos, não parecer jurídico)\n    briefing-modelo.md          (inclui campos obrigatórios de registro profissional)\n    qa-checklist.md\n    contrato-pontos.md\n  template-base\\               (repositório GitHub 'template-base', marcado como Template repository)\n    CLAUDE.md                  (regras específicas Astro 7 + Tailwind 4 + imagens)\n    astro.config.mjs           (site, fonts, sitemap, output estático)\n    package.json               (versões exatas; scripts: build = astro check && astro build)\n    wrangler.jsonc             (Worker com static assets apontando para dist)\n    src\\\n      data\\site.ts             (único arquivo com nome, nicho, país, NAP, horários, serviços, depoimentos, registros profissionais)\n      styles\\global.css        (@import \"tailwindcss\" + @theme do cliente)\n      layouts\\Base.astro       (lang pt-BR ou pt-PT, SEO, JSON-LD)\n      components\\sections\\     (Hero, Servicos, Sobre, Diferenciais, Depoimentos, Faq, Contato, RodapeBR, RodapePT, CtaWhatsApp)\n      components\\seo\\          (Seo.astro, JsonLd.astro)\n      assets\\                  (imagens otimizadas pelo Astro)\n      pages\\                   (index, servicos, sobre, contato, politica-de-privacidade, 404)\n    public\\                    (só favicon, robots.txt, og.jpg)\n  clientes\\\n    br-clinica-sorriso\\        (clone do template, repositório privado próprio, CLAUDE.md curto com dados do cliente)\n    pt-barbearia-porto\\\n  demos\\                       (um site demo por nicho para portfólio)\n\nPasso a passo no PowerShell:\n1) mkdir C:\\Users\\osmar\\fabrica-sites-ia ; cd C:\\Users\\osmar\\fabrica-sites-ia\n2) npm config set save-exact true\n3) npm create astro@latest template-base -- --template minimal --install --git  (depois, dentro da pasta: npx astro add tailwind ; npx astro add sitemap ; npm i -D @astrojs/check typescript)\n4) claude mcp add --transport http astro-docs https://mcp.docs.astro.build/mcp\n5) Abrir o Claude Code na pasta C:\\Users\\osmar\\fabrica-sites-ia\n\nPrompt inicial sugerido para o Claude Code: \"Leia o CLAUDE.md. Monte o template-base em Astro 7 estático com Tailwind 4 via @tailwindcss/vite, Fonts API, sitemap e componentes de seção que leem tudo de src/data/site.ts. Crie RodapeBR e RodapePT conforme docs/legal. Rode npm run build e corrija todos os erros sozinho. Não use React, tailwind.config.js, ViewTransitions nem imagens em public/.\"\n\nPrompt por cliente: \"Use a skill novo-cliente com o briefing em clientes/br-clinica-sorriso/briefing.md. Nicho: dentista, país: BR. Siga docs/nichos/dentista.md e docs/locale/pt-BR.md. Pare e me pergunte se faltar CRO ou responsável técnico.\"",
+  "fluxo_por_site": [
+   "1. Briefing. Formulário com: país (BR ou PT), nicho, NAP completo, horários, serviços, diferenciais, fotos reais, depoimentos com autorização, registros profissionais (CRM/RQE, CRO, OAB, CRECI-J, ERS, AMI, cédula), CNPJ ou NIF, canal de WhatsApp, domínio. Portão: nenhum campo legal obrigatório vazio; cliente assina que o conteúdo regulamentado é responsabilidade dele.",
+   "2. Direção visual. A IA propõe paleta de 4 a 6 tokens nomeados e um par de fontes a partir do playbook do nicho, mais 2 ou 3 referências. Gera o bloco @theme. Portão: cliente aprova um mock do hero em 375 e 1440 px; checagem contra a lista anti-padrão (creme com terracota, rótulos em caixa alta, 01/02/03 sem sequência, fade em toda seção, hover em todo card, destaque de uma palavra só no título).",
+   "3. Conteúdo. Textos escritos no português do país com o arquivo de locale, sem promessa de resultado em nichos regulados, título e description por página. Portão: revisão humana do texto (pt-BR em site PT derruba credibilidade) e aprovação escrita do cliente.",
+   "4. Construção. Clonar template, preencher src/data/site.ts, trocar @theme, escolher variantes das seções, imagens em src/assets. Após cada seção: npm run build (astro check && astro build) sem erro. Dev server em terminal separado no Windows.",
+   "5. QA. Screenshots em 375, 768 e 1440 via Chrome DevTools MCP, lighthouse_audit, performance trace, teste de wa.me e tel:, validação do JSON-LD no Rich Results Test, preview do link no WhatsApp, checklist legal do país. Portão: todas as metas do qa_checklist atingidas.",
+   "6. Entrega. Deploy de preview (URL da Cloudflare) para aprovação final, depois produção com domínio do cliente, HTTPS, envio do sitemap no Search Console, ajuste do Google Business Profile (nome real, categoria, link). Portão: cliente aprova por escrito; tag de versão no Git.",
+   "7. Manutenção. Plano mensal com número fixo de alterações; cada alteração passa por build e Lighthouse; revisão trimestral do template base (Astro teve duas majors em 3 meses); clientes entregues ficam com versões travadas; renovação de domínio acompanhada."
+  ],
+  "nichos": [
+   {
+    "nicho": "Clínica médica",
+    "mercado": "ambos",
+    "objetivo": "Gerar agendamento e transmitir confiança",
+    "secoes": [
+     "Hero com especialidade e cidade",
+     "Especialidades",
+     "Corpo clínico com registro",
+     "Estrutura",
+     "Convênios (BR) ou acordos e seguros (PT)",
+     "FAQ visível",
+     "Localização e horários",
+     "Rodapé legal"
+    ],
+    "cta": "Agendar consulta (BR) / Marcar consulta (PT) via WhatsApp",
+    "integracoes": [
+     "wa.me",
+     "tel:",
+     "Mapa como imagem estática com link",
+     "Doctoralia (link externo)"
+    ],
+    "direcao_visual": "Clínico sem ser frio: azul petróleo #1F4E5F, verde sálvia #8FB3A0, papel #F7F8F6, grafite #22282B, acento coral suave #E07A5F só no CTA. Fontes: Fraunces (títulos) + Inter Tight (texto). Fotos reais da equipe e consultórios, luz natural.",
+    "regras_setoriais": [
+     "BR: Resolução CFM 2.336/2023 exige nome do médico, CRM e RQE ao anunciar especialidade, e diretor técnico na clínica (não reverificado; conferir no CFM)",
+     "PT: publicidade em saúde identifica promotor, registo ERS, licença e cédula (não reverificado)",
+     "Sem promessa de resultado e sem antes e depois gerado por IA",
+     "Formulário não pede sintomas nem diagnóstico"
+    ],
+    "schema_org": "MedicalClinic"
+   },
+   {
+    "nicho": "Dentista",
+    "mercado": "ambos",
+    "objetivo": "Agendar avaliação",
+    "secoes": [
+     "Hero com tratamento principal",
+     "Tratamentos",
+     "Dentista responsável com CRO",
+     "Tecnologia e estrutura",
+     "Depoimentos autorizados",
+     "Convênios",
+     "Localização",
+     "Rodapé legal"
+    ],
+    "cta": "Agendar avaliação pelo WhatsApp",
+    "integracoes": [
+     "wa.me",
+     "tel:",
+     "Doctoralia",
+     "Mapa estático"
+    ],
+    "direcao_visual": "Fresco e preciso: menta escuro #2E6B5E, gelo #EEF4F2, branco #FFFFFF, carvão #1D2322, acento amarelo manteiga #F2C94C. Fontes: Manrope (tudo) com pesos contrastantes, ou Sora + Manrope.",
+    "regras_setoriais": [
+     "BR: CFO-196/2019 permite antes e depois com termo de consentimento e exige nome e CRO; clínica mostra inscrição e responsável técnico (não reverificado)",
+     "PT: Ordem dos Médicos Dentistas e ERS (regulamento não verificado)",
+     "Foto de paciente só com consentimento específico"
+    ],
+    "schema_org": "Dentist"
+   },
+   {
+    "nicho": "Psicólogo",
+    "mercado": "ambos",
+    "objetivo": "Primeiro contato discreto para sessão",
+    "secoes": [
+     "Hero acolhedor com abordagem",
+     "Como funciona a terapia",
+     "Sobre o profissional com CRP ou cédula",
+     "Atendimento presencial e online",
+     "FAQ",
+     "Contato"
+    ],
+    "cta": "Conversar sobre uma primeira sessão",
+    "integracoes": [
+     "wa.me",
+     "Google Agenda com página de agendamento ou Cal.com"
+    ],
+    "direcao_visual": "Calmo e humano: lavanda acinzentada #8C86A8, areia fria #ECE9E4, ameixa #3E3450, oliva claro #A9B38A. Fontes: Newsreader (títulos) + Karla (texto). Ilustrações abstratas, sem fotos de pessoas chorando.",
+    "regras_setoriais": [
+     "BR: CFP exige registro (CRP) e limita promessa de resultado; resolução vigente NÃO verificada",
+     "PT: Ordem dos Psicólogos, regulamento não verificado",
+     "Formulário mínimo, sem pedir relato clínico"
+    ],
+    "schema_org": "MedicalBusiness (subtipo Psychologist não verificado no schema.org)"
+   },
+   {
+    "nicho": "Advocacia",
+    "mercado": "ambos",
+    "objetivo": "Autoridade e lead qualificado",
+    "secoes": [
+     "Hero sóbrio com áreas de atuação",
+     "Áreas de atuação",
+     "Sócios com OAB ou cédula",
+     "Como funciona o atendimento",
+     "Artigos informativos",
+     "Contato"
+    ],
+    "cta": "Agendar uma reunião",
+    "integracoes": [
+     "Cal.com ou Calendly",
+     "tel:",
+     "e-mail",
+     "wa.me"
+    ],
+    "direcao_visual": "Editorial e firme: verde garrafa #1E3B34, osso #F3F1EC, tinta #151515, latão #A8834A em filetes finos. Fontes: Cormorant Garamond (títulos) + IBM Plex Sans (texto). Layout de revista, muito espaço em branco.",
+    "regras_setoriais": [
+     "BR: Provimento 205/2021 CFOAB permite site informativo com nome e OAB, veda promessa de resultado, captação e ostentação; preços na publicidade ativa vedados (não reverificado)",
+     "PT: Ordem dos Advogados, regulamento não verificado",
+     "Sem depoimentos de resultados de causas"
+    ],
+    "schema_org": "LegalService (Attorney)"
+   },
+   {
+    "nicho": "Contabilidade",
+    "mercado": "ambos",
+    "objetivo": "Pedido de orçamento de empresas",
+    "secoes": [
+     "Hero com público atendido (MEI, PME)",
+     "Serviços",
+     "Como funciona a troca de contador",
+     "Planos em faixas 'a partir de'",
+     "Depoimentos de empresas",
+     "Contato"
+    ],
+    "cta": "Pedir orçamento",
+    "integracoes": [
+     "wa.me",
+     "Cal.com",
+     "tel:",
+     "e-mail"
+    ],
+    "direcao_visual": "Organizado e confiável sem azul corporativo: azul tinta #23395B, verde planilha #3F7D58, papel #F5F6F2, amarelo marca-texto #F4D35E para destaques. Fontes: Space Grotesk (títulos) + Source Sans 3 (texto). Números tabulares.",
+    "regras_setoriais": [
+     "BR: registro CRC do profissional ou escritório (norma não verificada)",
+     "PT: Ordem dos Contabilistas Certificados (não verificado)"
+    ],
+    "schema_org": "AccountingService"
+   },
+   {
+    "nicho": "Salão de beleza e estética",
+    "mercado": "ambos",
+    "objetivo": "Reservas e portfólio",
+    "secoes": [
+     "Hero com foto de trabalho real",
+     "Serviços com preço 'a partir de'",
+     "Galeria",
+     "Equipe",
+     "Avaliações",
+     "Horários e localização"
+    ],
+    "cta": "Agendar horário (BR) / Marcar (PT)",
+    "integracoes": [
+     "Trinks ou Booksy (BR)",
+     "Fresha ou Booksy (PT)",
+     "Link para Instagram (sem embed)",
+     "wa.me"
+    ],
+    "direcao_visual": "Moda editorial: rosa queimado #C9837A, vinho #5B2333, pérola #F6F1EE, preto quente #1C1717. Fontes: Playfair Display SC só em títulos grandes + DM Sans. Fotos com mesmo tratamento de cor.",
+    "regras_setoriais": [
+     "Estética com procedimento pode cair em conselhos de saúde (biomedicina, CFBM): não verificado",
+     "Antes e depois só com autorização da cliente"
+    ],
+    "schema_org": "BeautySalon"
+   },
+   {
+    "nicho": "Barbearia",
+    "mercado": "ambos",
+    "objetivo": "Agendamento rápido",
+    "secoes": [
+     "Hero com foto forte",
+     "Cortes e preços",
+     "Barbeiros",
+     "Galeria",
+     "Horários",
+     "Localização"
+    ],
+    "cta": "Marcar meu corte",
+    "integracoes": [
+     "Booksy ou Trinks",
+     "wa.me",
+     "Mapa estático"
+    ],
+    "direcao_visual": "Oficina urbana: tabaco #6B4A2F, verde militar #3C4A3A, creme papel pardo #E8DFD0, preto #111111, acento laranja sinal #E4572E. Fontes: Anton ou Bebas Neue (títulos) + Work Sans. Tom de 'tu' aceitável em PT para marca jovem.",
+    "regras_setoriais": [
+     "Direito de imagem dos clientes nas fotos"
+    ],
+    "schema_org": "HairSalon (BarberShop não verificado no schema.org)"
+   },
+   {
+    "nicho": "Restaurante e café",
+    "mercado": "ambos",
+    "objetivo": "Reservas, pedidos externos e visita",
+    "secoes": [
+     "Hero com prato real",
+     "Pratos em destaque",
+     "Cardápio (BR) / Menu ou ementa (PT) em HTML",
+     "Horários",
+     "Localização",
+     "Eventos"
+    ],
+    "cta": "Reservar mesa / Pedir no iFood (BR) / Encomendar na Glovo ou Uber Eats (PT)",
+    "integracoes": [
+     "TheFork (PT)",
+     "iFood (BR)",
+     "Glovo e Uber Eats (PT)",
+     "wa.me",
+     "Mapa estático"
+    ],
+    "direcao_visual": "Apetite e textura: tomate #C8412B, azeitona #5E6B3A, farinha #F4EEE3, carvão #231F1C. Fontes: Recoleta ou Fraunces (títulos) + Figtree. Grão sutil de fundo, fotos quentes.",
+    "regras_setoriais": [
+     "Informação de alergénios se exibir ementa em PT (não verificado)",
+     "Links externos, sem carrinho"
+    ],
+    "schema_org": "Restaurant (com servesCuisine e menu)"
+   },
+   {
+    "nicho": "Academia e personal trainer",
+    "mercado": "ambos",
+    "objetivo": "Marcar aula experimental",
+    "secoes": [
+     "Hero com energia",
+     "Modalidades",
+     "Grade de horários",
+     "Planos",
+     "Estrutura",
+     "Depoimentos",
+     "Localização"
+    ],
+    "cta": "Agende sua aula grátis",
+    "integracoes": [
+     "wa.me",
+     "Instagram (link)"
+    ],
+    "direcao_visual": "Esportivo gráfico: preto #0E0E0E, lima elétrico #C6F432 só em CTA e números, cinza concreto #9A9A96, branco #FAFAFA. Fontes: Archivo Black (títulos) + Archivo. Termo 'ginásio' em PT.",
+    "regras_setoriais": [
+     "BR: profissional de educação física com CREF (norma não verificada)",
+     "Sem promessa de perda de peso garantida"
+    ],
+    "schema_org": "ExerciseGym"
+   },
+   {
+    "nicho": "Imobiliária e corretor",
+    "mercado": "ambos",
+    "objetivo": "Captar lead de compra, venda ou avaliação",
+    "secoes": [
+     "Hero com bairros atendidos",
+     "Imóveis em destaque (links para portal ou CRM)",
+     "Avaliar meu imóvel",
+     "Serviços",
+     "Equipe",
+     "Contato"
+    ],
+    "cta": "Avaliar meu imóvel",
+    "integracoes": [
+     "wa.me",
+     "Links para portais",
+     "tel:"
+    ],
+    "direcao_visual": "Arquitetônico: azul ardósia #3A4A5C, terra clara #D9C7B0, off-white #F8F7F4, grafite #202326, acento verde musgo #5C7A4E. Fontes: Instrument Serif (títulos) + Inter Tight.",
+    "regras_setoriais": [
+     "BR: CRECI com letra J para pessoa jurídica em anúncios (não reverificado)",
+     "PT: licença AMI (IMPIC) em publicidade (não reverificado)"
+    ],
+    "schema_org": "RealEstateAgent"
+   },
+   {
+    "nicho": "Oficina mecânica",
+    "mercado": "ambos",
+    "objetivo": "Pedido de orçamento",
+    "secoes": [
+     "Hero com serviços principais",
+     "Serviços",
+     "Marcas atendidas",
+     "Garantia",
+     "Horários",
+     "Mapa"
+    ],
+    "cta": "Pedir orçamento no WhatsApp",
+    "integracoes": [
+     "wa.me",
+     "tel:",
+     "Mapa estático"
+    ],
+    "direcao_visual": "Industrial limpo: azul macacão #1D3557, amarelo segurança #F2B705, aço #C9CDD2, preto óleo #141414. Fontes: Barlow Condensed (títulos) + Barlow.",
+    "regras_setoriais": [
+     "Orçamento prévio ao consumidor (norma não verificada)"
+    ],
+    "schema_org": "AutoRepair"
+   },
+   {
+    "nicho": "Arquiteto e design de interiores",
+    "mercado": "ambos",
+    "objetivo": "Agendar reunião de projeto",
+    "secoes": [
+     "Hero com projeto em tela cheia",
+     "Portfólio grande",
+     "Processo",
+     "Prémios e publicações",
+     "Sobre",
+     "Contato"
+    ],
+    "cta": "Agendar reunião",
+    "integracoes": [
+     "Cal.com",
+     "e-mail",
+     "Instagram (link)"
+    ],
+    "direcao_visual": "Galeria suíça: branco gesso #F2F0EB, preto #0F0F0F, cinza pedra #8E8A83, acento único terracota queimada evitado, usar azul cobalto #2743C9. Fontes: Neue Montreal indisponível, usar Schibsted Grotesk + Instrument Serif. Grid assimétrico.",
+    "regras_setoriais": [
+     "BR: registro CAU (não verificado)",
+     "PT: Ordem dos Arquitectos (não verificado)",
+     "Crédito de fotógrafo nas imagens"
+    ],
+    "schema_org": "ProfessionalService (HomeAndConstructionBusiness)"
+   },
+   {
+    "nicho": "Pet shop e veterinário",
+    "mercado": "ambos",
+    "objetivo": "Agendar consulta ou banho e tosa",
+    "secoes": [
+     "Hero com animais reais",
+     "Serviços",
+     "Equipe com registro",
+     "Estrutura",
+     "Depoimentos",
+     "Localização"
+    ],
+    "cta": "Agendar banho ou consulta",
+    "integracoes": [
+     "wa.me",
+     "tel:",
+     "Mapa estático"
+    ],
+    "direcao_visual": "Alegre sem infantil: verde folha #3D8B5A, pêssego #F4B393, creme frio #F7F5EF, marrom chocolate #3B2A20. Fontes: Bricolage Grotesque + Nunito Sans.",
+    "regras_setoriais": [
+     "BR: médico veterinário com CRMV (não verificado)",
+     "PT: Ordem dos Médicos Veterinários (não verificado)"
+    ],
+    "schema_org": "VeterinaryCare ou PetStore"
+   }
+  ],
+  "vocabulario_br_pt": [
+   {
+    "br": "celular",
+    "pt": "telemóvel"
+   },
+   {
+    "br": "endereço",
+    "pt": "morada"
+   },
+   {
+    "br": "CEP (00000-000)",
+    "pt": "código postal (0000-000)"
+   },
+   {
+    "br": "CNPJ / CPF",
+    "pt": "NIF (9 dígitos)"
+   },
+   {
+    "br": "agendar",
+    "pt": "marcar"
+   },
+   {
+    "br": "agendamento",
+    "pt": "marcação"
+   },
+   {
+    "br": "cardápio",
+    "pt": "menu ou ementa"
+   },
+   {
+    "br": "academia",
+    "pt": "ginásio"
+   },
+   {
+    "br": "time / equipe",
+    "pt": "equipa"
+   },
+   {
+    "br": "contato",
+    "pt": "contacto"
+   },
+   {
+    "br": "Fale conosco",
+    "pt": "Contacte-nos"
+   },
+   {
+    "br": "ônibus",
+    "pt": "autocarro"
+   },
+   {
+    "br": "estacionamento",
+    "pt": "parque de estacionamento"
+   },
+   {
+    "br": "convênio",
+    "pt": "acordo ou seguro de saúde"
+   },
+   {
+    "br": "registro",
+    "pt": "registo"
+   },
+   {
+    "br": "prêmio",
+    "pt": "prémio"
+   },
+   {
+    "br": "orçamento",
+    "pt": "orçamento (igual; 'pedir orçamento')"
+   },
+   {
+    "br": "você agenda sua consulta",
+    "pt": "marque a sua consulta"
+   },
+   {
+    "br": "tela",
+    "pt": "ecrã"
+   },
+   {
+    "br": "arquivo (PDF)",
+    "pt": "ficheiro"
+   },
+   {
+    "br": "cadastro",
+    "pt": "registo ou inscrição"
+   },
+   {
+    "br": "café da manhã",
+    "pt": "pequeno-almoço"
+   },
+   {
+    "br": "banheiro",
+    "pt": "casa de banho"
+   },
+   {
+    "br": "telefone +55 (11) 91234-5678",
+    "pt": "telefone +351 912 345 678"
+   },
+   {
+    "br": "política de privacidade",
+    "pt": "política de privacidade (igual; em PT juntar 'e cookies')"
+   },
+   {
+    "br": "ótimo",
+    "pt": "óptimo não; usar 'ótimo' (pós-Acordo)"
+   },
+   {
+    "br": "personal trainer",
+    "pt": "personal trainer ou treinador pessoal"
+   },
+   {
+    "br": "horário de funcionamento",
+    "pt": "horário de funcionamento (igual)"
+   }
+  ],
+  "checklist_legal_br": [
+   "Política de Privacidade (LGPD, Lei 13.709/2018): link no rodapé e junto ao formulário, dizendo controlador, dados coletados, finalidade, base legal, prazo de guarda e como exercer direitos (fato, fonte planalto.gov.br; não reverificado).",
+   "Canal de comunicação com o titular: e-mail ou formulário para assuntos de dados pessoais citado na política (Resolução CD/ANPD 2/2022, art. 11, confirmado). Pequeno porte não precisa de encarregado.",
+   "Consultório pequeno com dado de saúde não perde automaticamente o regime simplificado: o art. 4 exige um critério geral mais um específico (correção confirmada). Mesmo assim, não pedir sintomas no formulário.",
+   "Texto curto no formulário com finalidade e link para a política; consentimento separado só se houver marketing (estimativa).",
+   "Banner de cookies com aceitar e rejeitar só se houver GA4, Meta Pixel ou embeds de terceiros (Guia ANPD 2022, orientação, não vinculante).",
+   "Rodapé com razão social, CNPJ e endereço: prática recomendada; não há obrigação encontrada para site sem venda (estimativa).",
+   "Registros profissionais visíveis conforme o nicho: CRM e RQE (médicos), CRO e responsável técnico (dentistas), OAB (advogados), CRECI-J (imobiliárias), CRP, CRN, CREFITO etc. (normas não reverificadas; confirmar no conselho).",
+   "Acessibilidade: LBI art. 63 (Lei 13.146/2015) obriga sites de empresas; adotar WCAG 2.1 AA (alt, contraste, teclado, labels).",
+   "Fotos de pessoas só com autorização (Código Civil art. 20); pacientes com termo específico.",
+   "Imagens de IA só ilustrativas, nunca como 'nossa equipe' ou antes e depois.",
+   "Página de política acessível mesmo sem JS e sem cookies."
+  ],
+  "checklist_legal_pt": [
+   "Identificação do prestador (DL 7/2004, art. 10, não confirmado na redação): rodapé ou página com denominação, morada, e-mail, registo comercial, NIF e, em profissão regulamentada, ordem e título profissional.",
+   "Livro de Reclamações Eletrónico (DL 156/2005 alterado pelo DL 74/2017, confirmado como obrigação): link ou selo para livroreclamacoes.pt em destaque no rodapé de todas as páginas.",
+   "Entidade RAL (Lei 144/2015 art. 18, redação DL 102/2017, não reverificado): nome e site da entidade de resolução alternativa de litígios no rodapé.",
+   "Política de Privacidade e Cookies (RGPD arts. 13 e 14 + Lei 58/2019): responsável e contactos, finalidades, fundamento, prazos, direitos e direito de reclamar à CNPD.",
+   "Cookies (Lei 41/2004, art. 5, alterada pela Lei 46/2012): consentimento prévio para tudo que não seja estritamente necessário; banner com aceitar e rejeitar em igual destaque; nada de GA4 ou pixel antes do consentimento. 'Sem cookies' não garante dispensa (EDPB 2/2023).",
+   "Saúde: registo ERS, licença de funcionamento e cédula profissional no rodapé (ERS, não reverificado).",
+   "Mediação imobiliária: número da licença AMI visível no cabeçalho ou rodapé e nos anúncios (Lei 15/2013, não reverificado).",
+   "Fontes auto-hospedadas, mapa por imagem estática e vídeos carregados só no clique para evitar transferência a terceiros.",
+   "Acessibilidade: EAA/DL 82/2022 isenta microempresas de serviços e provavelmente não abrange site institucional sem venda (estimativa); adotar WCAG 2.1 AA mesmo assim.",
+   "Direito de imagem: consentimento do retratado (Código Civil art. 79).",
+   "AI Act art. 50 (aplicável desde 02/08/2026, não reverificado): chatbot avisa que é IA; imagem realista de pessoas ou locais que não existem não deve ser usada."
+  ],
+  "qa_checklist": [
+   "npm run build (astro check && astro build) sem erro e sem warning de tipo",
+   "Lighthouse mobile (lighthouse_audit): Acessibilidade >= 95, SEO >= 95, Boas práticas >= 95; Performance >= 90 no laboratório (meta própria, estimativa)",
+   "LCP <= 2,5 s, INP < 200 ms, CLS < 0,1 (metas oficiais do Google)",
+   "JS enviado ao cliente <= 50 KB gzip na home sem terceiros (meta própria)",
+   "Hero image <= 150 KB em AVIF/WebP, todas as imagens com width e height, nenhuma imagem em public/ exceto og e favicon",
+   "og:image 1200x630 JPEG < 200 KB (Meta aceita até 600 KB) e preview testado no WhatsApp",
+   "No máximo 2 famílias de fonte, auto-hospedadas, com preload só do peso crítico",
+   "Screenshots em 375, 768 e 1440 px sem rolagem horizontal e sem texto cortado; teste também em 320 px",
+   "Contraste mínimo 4,5:1 em texto normal (WCAG AA), foco visível, navegação por teclado, labels em formulários, alt em imagens",
+   "Um H1 por página, title e description únicos, canonical absoluto, lang pt-BR ou pt-PT no html",
+   "JSON-LD LocalBusiness com subtipo validado no Rich Results Test, NAP idêntico ao rodapé e ao Google Business Profile",
+   "sitemap-index.xml gerado, robots.txt com linha Sitemap, 404 devolvendo status 404, favicon SVG + PNG 48 + apple-touch 180",
+   "Links wa.me (só dígitos, com mensagem pré-preenchida) e tel: testados no celular",
+   "Formulário testado: envio real, página de agradecimento, honeypot presente",
+   "prefers-reduced-motion respeitado; site funciona sem View Transitions",
+   "Checklist legal do país 100% preenchido; revisão humana do vocabulário pt-BR ou pt-PT",
+   "Autocrítica da IA contra a lista anti-padrão antes da entrega"
+  ],
+  "custos": [
+   {
+    "item": "Hospedagem Cloudflare Workers (static assets)",
+    "valor": "US$ 0 por mês até 100 Workers; Workers Paid a partir de US$ 5/mês",
+    "tipo": "fato",
+    "fonte": "https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/ ; https://developers.cloudflare.com/workers/platform/pricing/"
+   },
+   {
+    "item": "Alternativa Netlify",
+    "valor": "Personal US$ 9/mês (1.000 créditos); Pro US$ 20 a 126/mês",
+    "tipo": "fato",
+    "fonte": "https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/credit-based-pricing-plans/"
+   },
+   {
+    "item": "Domínio .com.br",
+    "valor": "cerca de R$ 40/ano (não confirmado na verificação; conferir em registro.br)",
+    "tipo": "estimativa",
+    "fonte": "https://registro.br/dominio/"
+   },
+   {
+    "item": "Domínio .pt",
+    "valor": "de 11,95 € (1º ano promocional) a 32,90 €/ano sem IVA, conforme registrador (não reverificado)",
+    "tipo": "estimativa",
+    "fonte": "https://www.site.pt/registar-dominio/ ; https://www.dominios.pt/precos/dominio/tld/"
+   },
+   {
+    "item": "GitHub (repositórios privados)",
+    "valor": "US$ 0",
+    "tipo": "fato",
+    "fonte": "https://github.com/pricing"
+   },
+   {
+    "item": "Formulário Web3Forms",
+    "valor": "Free 250 envios/mês; Pro US$ 12/mês anual; Agency US$ 33/mês anual (não confirmado, página deu 403)",
+    "tipo": "estimativa",
+    "fonte": "https://web3forms.com/pricing"
+   },
+   {
+    "item": "Analytics Cloudflare Web Analytics",
+    "valor": "US$ 0 (limite flexível de 10 sites, não reverificado)",
+    "tipo": "estimativa",
+    "fonte": "https://developers.cloudflare.com/web-analytics/faq/"
+   },
+   {
+    "item": "E-mail Google Workspace Business Starter (BR)",
+    "valor": "R$ 40,90 por usuário/mês cheio, sem impostos (não reverificado)",
+    "tipo": "estimativa",
+    "fonte": "https://workspace.google.com/intl/pt-BR/pricing.html"
+   },
+   {
+    "item": "E-mail Cloudflare Email Routing ou Zoho Mail Free",
+    "valor": "R$ 0 (só recebe e encaminha / até 5 usuários via web; não reverificado)",
+    "tipo": "estimativa",
+    "fonte": "https://developers.cloudflare.com/email-routing/ ; https://www.zoho.com/mail/zohomail-pricing.html"
+   },
+   {
+    "item": "Ferramentas (Astro, Tailwind, GSAP, fontes open source)",
+    "valor": "R$ 0 (licenças MIT e GSAP Standard gratuita)",
+    "tipo": "fato",
+    "fonte": "https://gsap.com/community/standard-license/ ; https://registry.npmjs.org/astro/latest"
+   },
+   {
+    "item": "Claude Code plano Team",
+    "valor": "não sei o valor do plano do usuário",
+    "tipo": "nao_sei",
+    "fonte": "sem fonte"
+   },
+   {
+    "item": "Custo operacional por site (infra)",
+    "valor": "perto de R$ 0 a R$ 5/mês por site, mais domínio do cliente",
+    "tipo": "estimativa",
+    "fonte": "soma dos itens acima"
+   },
+   {
+    "item": "Preço de venda sugerido BR",
+    "valor": "landing R$ 800 a 1.500; institucional R$ 1.500 a 3.000; mensalidade R$ 50 a 150",
+    "tipo": "estimativa",
+    "fonte": "posição de mercado sem fonte; blogs citam freelancer R$ 1.500 a 8.000 (não reverificado)"
+   },
+   {
+    "item": "Preço de venda sugerido PT",
+    "valor": "400 a 900 € mais 20 a 40 €/mês",
+    "tipo": "estimativa",
+    "fonte": "posição de mercado sem fonte; blogs citam 300 a 1.500 € (não reverificado)"
+   },
+   {
+    "item": "Concorrência Hostinger Criador de Sites",
+    "valor": "R$ 10,99/mês só em contrato de 48 meses (não confirmado)",
+    "tipo": "estimativa",
+    "fonte": "https://www.hostinger.com/br/criador-de-sites"
+   }
+  ],
+  "alertas": [
+   "Mover tudo para C:\\Users\\osmar\\fabrica-sites-ia antes de começar. node_modules no OneDrive, em caminho com espaço e acento, tende a dar EPERM/EBUSY e conflito de sincronização. Backup é o GitHub, não o OneDrive.",
+   "Travar versões (save-exact) e fixar no CLAUDE.md: Astro 7, <ClientRouter /> nunca <ViewTransitions />, import.meta.glob nunca Astro.glob, src/content.config.ts, z de astro/zod, Tailwind 4 sem tailwind.config.js. Modelos geram código antigo.",
+   "No Windows o dev server roda em primeiro plano; o AGENTS.md gerado pelo create-astro pode mandar usar astro dev --background e a IA travar esperando. Rodar o dev server em terminal separado.",
+   "Node 20 chegou ao fim em 30/04/2026 (correção da verificação). Node 24 entra em manutenção em 20/10/2026, ainda seguro até 30/04/2028. Atualizar de 24.16.0 para a 24.21.0.",
+   "Nunca colocar a carteira no Netlify Free: um estouro pausa todos os sites. Vercel Hobby e GitHub Pages violam termos para uso comercial.",
+   "Uma conta de hospedagem única é ponto único de falha. Manter cartão válido, 2FA e documentar como migrar.",
+   "Web3Forms: preços e se o limite de 250 envios é por conta ou por chave não foram confirmados. Checar antes do 10º cliente; ao estourar, mensagens se perdem sem aviso.",
+   "Regras de publicidade de CFP, CFN, COFFITO, estética e das ordens portuguesas NÃO foram verificadas. Ler no site do conselho antes de vender para esses nichos; as de CFM, CFO, OAB, CRECI, ERS e AMI também precisam de conferência na fonte.",
+   "Políticas de privacidade geradas por IA são modelo, não parecer. Validar com advogado de cada país antes de escalar.",
+   "Domínio sempre em nome do cliente; no .pt ele precisa confirmar e-mail e telefone.",
+   "Qualquer embed (Maps, YouTube, Instagram) ou pixel adicionado depois faz o site exigir banner de cookies, principalmente em Portugal.",
+   "Tailwind 4 exige Safari 16.4+ e Chrome 111+; iPhones antigos podem ver layout quebrado. Não sei a fatia desses aparelhos no público.",
+   "Não prometer posição no Google nem aparição em AI Overviews; FAQ rich result acabou em 07/05/2026; llms.txt não tem efeito comprovado.",
+   "'Feito por IA' não é diferencial (há concorrentes vendendo isso e construtores baratos). Vender prazo, design por nicho, velocidade medida e 'você não mexe em nada'.",
+   "Vários dados da pesquisa (HTTP Archive, aquisições, preços Hostinger, Registro.br, licenças de bancos de imagem) ficaram como não confirmados; não repassar ao cliente como fato sem conferir."
+  ]
+ },
+ "verificacoes": [
+  {
+   "key": "stack",
+   "verificacao": {
+    "verificacoes": [
+     {
+      "afirmacao": "Astro estável atual é 7.3.5",
+      "veredito": "confirmado",
+      "correcao": "",
+      "fonte": "https://registry.npmjs.org/astro/latest (consultado 25/09/2026)"
+     },
+     {
+      "afirmacao": "Astro 7.3.5 exige node >=22.12.0 e npm >=9.6.5",
+      "veredito": "confirmado",
+      "correcao": "O package.json também declara pnpm >=7.1.0.",
+      "fonte": "https://registry.npmjs.org/astro/latest"
+     },
+     {
+      "afirmacao": "Cronograma do Node: 24 manutenção 20/10/2026 e fim 30/04/2028; 26 LTS 28/10/2026 e fim 30/04/2029; 22 fim 30/04/2027; Node 20 fim de vida em 24/03/2026",
+      "veredito": "errado",
+      "correcao": "As datas de 22, 24 e 26 conferem. O schedule.json oficial registra o fim do Node 20 em 30/04/2026, não em 24/03/2026.",
+      "fonte": "https://raw.githubusercontent.com/nodejs/Release/main/schedule.json"
+     },
+     {
+      "afirmacao": "Next.js atual é 16.3.6 com engines node >=20.9.0",
+      "veredito": "confirmado",
+      "correcao": "",
+      "fonte": "https://registry.npmjs.org/next/latest"
+     },
+     {
+      "afirmacao": "Tailwind CSS atual é 4.3.3",
+      "veredito": "confirmado",
+      "correcao": "",
+      "fonte": "https://registry.npmjs.org/tailwindcss/latest"
+     },
+     {
+      "afirmacao": "GSAP 3.15.0",
+      "veredito": "confirmado",
+      "correcao": "Só verifiquei a versão. Os termos da licença não foram checados.",
+      "fonte": "https://registry.npmjs.org/gsap/latest"
+     },
+     {
+      "afirmacao": "SvelteKit 2.70.3",
+      "veredito": "confirmado",
+      "correcao": "Verifiquei só o número da versão (engines node >=18.13).",
+      "fonte": "https://registry.npmjs.org/@sveltejs/kit/latest"
+     },
+     {
+      "afirmacao": "Eleventy estável 3.1.6",
+      "veredito": "confirmado",
+      "correcao": "",
+      "fonte": "https://registry.npmjs.org/@11ty/eleventy/latest"
+     },
+     {
+      "afirmacao": "docs.astro.build/llms.txt retorna 404",
+      "veredito": "confirmado",
+      "correcao": "Retornou HTTP 404 em 25/09/2026. O endereço do MCP e o comportamento no Windows não foram verificados.",
+      "fonte": "https://docs.astro.build/llms.txt"
+     },
+     {
+      "afirmacao": "Mudanças no compilador do Astro 7, APIs removidas no Astro 6, dados do HTTP Archive/CrUX, preço da Hostinger, pnpm/Corepack, aquisições de Astro e Tailwind",
+      "veredito": "nao_confirmado",
+      "correcao": "Esta rodada de verificação foi mínima e não conferiu esses pontos. Precisam de checagem antes de publicar, principalmente o preço da Hostinger e as aquisições.",
+      "fonte": "sem verificação nesta rodada"
+     }
+    ],
+    "achados_novos_importantes": [
+     "O package.json do Astro 7.3.5 também declara engines pnpm >=7.1.0 (https://registry.npmjs.org/astro/latest)."
+    ]
+   },
+   "recomendacoes": [
+    "Stack recomendada para este caso: Astro 7 em modo estático (sem adapter), Tailwind CSS 4 via plugin Vite oficial, TypeScript com preset 'strict' usado de forma leve (tipar props e o arquivo de dados do cliente), npm como gerenciador e Node 24 LTS. Deploy no Netlify, que o usuário já conhece. Motivos: zero JS por padrão, melhor CWV entre os frameworks JS nos dados do HTTP Archive (inclusive no Brasil), imagens, fontes e sitemap nativos, e template reaproveitável via create-astro --template.",
+    "Não usar Next.js para esses sites: no export estático você perde o next/image padrão, manda mais JS (mediana de 833 KB contra 396 KB) e a pior taxa de CWV no Brasil (18,9%). Ele só vale se um dia você vender app com login ou painel. SvelteKit e Eleventy funcionam, mas têm menos exemplos e comunidade. HTML + Tailwind puro fica só para landing de uma página.",
+    "Tirar os projetos do OneDrive antes de começar: criar algo como C:\\sites\\ (sem espaço, sem acento, fora de pasta sincronizada) e abrir o Claude Code nessa pasta. Se quiser backup, usar Git + GitHub privado em vez da sincronização do OneDrive.",
+    "Instalar Node 24 LTS pela página oficial (nodejs.org/en/download) e confirmar com node -v (tem que ser 22.12 ou mais, e par). Ficar no npm, que já vem com o Node: evita o bloqueio do pnpm por scripts de build, o problema do Defender e a falta de Corepack no Node 25+. Rodar npm config set save-exact true para travar versões exatas.",
+    "Criar um projeto 'base' uma vez e reaproveitar para todos os clientes: npm create astro@latest base-institucional -- --template minimal --add tailwind --add sitemap --install --git (testar se o --add tailwind funciona no create; se não, rodar npx astro add tailwind e npx astro add sitemap depois). Subir para o GitHub e gerar cada cliente com npm create astro@latest cliente-x -- --template SEU_USUARIO/base-institucional. Se o repositório for privado, usar 'Template repository' do GitHub e git clone.",
+    "Organizar o template por tokens e dados: um arquivo de tema por cliente com @theme (cores, fontes, raio, sombras) em src/styles/global.css; um arquivo de dados do cliente (ex.: src/data/site.ts ou content collection em src/content.config.ts) com nome, nicho, telefone/WhatsApp, endereço, horários, serviços, depoimentos e textos; componentes de seção (Hero, Serviços, Sobre, Diferenciais, Depoimentos, FAQ, Contato/Mapa, Rodapé) com variantes visuais por nicho. A IA só troca dados, tema e variantes, sem reescrever a estrutura.",
+    "Instalar o MCP oficial de docs do Astro no Claude Code: claude mcp add --transport http astro-docs https://mcp.docs.astro.build/mcp. No CLAUDE.md do template, fixar as regras que os modelos erram: Astro 7 (fechar todas as tags, usar {\" \"} quando precisar de espaço entre inline, <ClientRouter /> e nunca <ViewTransitions />, src/content.config.ts, import { z } from 'astro/zod', import.meta.glob e nunca Astro.glob); Tailwind 4 (sem tailwind.config.js, sem @astrojs/tailwind, sem @tailwind base, tokens em @theme); imagens em src/assets com <Image />/<Picture /> e nunca em public/; nenhum framework de UI (React etc.) sem necessidade; lang='pt-BR' ou 'pt-PT' no <html>.",
+    "Ciclo de verificação obrigatório no CLAUDE.md: depois de cada mudança, rodar npm run build com o script 'astro check && astro build' (instalar @astrojs/check e typescript como devDependencies), depois npm run preview e Lighthouse/PageSpeed no mobile antes de entregar. No Windows, pedir para a IA rodar o dev server em terminal separado, porque o modo background automático do Astro só existe em macOS/Linux.",
+    "Português: fazer um projeto por cliente, na variante do país dele (pt-BR ou pt-PT), com um dicionário de termos no template (ex.: celular/telemóvel, agendar/marcar, CEP/código postal, formato de telefone +55/+351). Só usar o i18n do Astro quando o cliente realmente precisar das duas variantes, com locales em string ('pt-br', 'pt-pt') e hreflang pt-BR/pt-PT, e evitar domains e caminhos customizados (exigem servidor).",
+    "Animações: começar com CSS puro e View Transitions nativas entre páginas (@view-transition { navigation: auto; }), sempre respeitando prefers-reduced-motion. GSAP (gratuito, liberado para site de cliente) só em seções de destaque, carregado apenas onde for usado. Evitar <ClientRouter /> se não houver motivo, porque ele vira SPA e complica os scripts.",
+    "Fontes com a Fonts API do Astro (auto-hospedadas, com preload e fallback) em vez de link direto para o Google Fonts. Limitar a 2 famílias por site.",
+    "Revisar e atualizar o template a cada trimestre (o Astro lançou duas majors em 3 meses em 2026), testando build e Lighthouse no template base antes de usar em cliente novo. Clientes já entregues ficam na versão travada."
+   ],
+   "riscos": [
+    "Ritmo de versões: Astro 6 (mar/2026) e 7 (jun/2026) quebraram APIs. Modelos treinados antes geram código antigo (ViewTransitions, Astro.glob, content/config.ts, Tailwind v3). Sem MCP, CLAUDE.md e versões travadas, o build quebra ou sai código obsoleto.",
+    "O compilador Rust do Astro 7 recusa HTML malformado. É bom porque pega erro no build, mas um iniciante pode travar em mensagens de erro, e a IA precisa ser instruída a rodar o build e corrigir sozinha.",
+    "OneDrive e Windows Defender travando node_modules (EPERM/EBUSY) e deixando npm install lento, se os projetos continuarem na Área de Trabalho sincronizada.",
+    "Os dados de CWV são observacionais: um site Astro com imagens enormes em public/, vídeo de fundo, embed do Instagram, widget de chat ou GTM cheio de tags pode ficar tão lento quanto qualquer outro. Performance depende de disciplina no template, não só do framework.",
+    "Tailwind v4 exige Safari 16.4+/Chrome 111+. Aparelhos antigos, comuns em parte do público brasileiro, podem ver o layout quebrado. Não sei a fatia real desses aparelhos no público dos clientes.",
+    "View Transitions não animam em todos os navegadores (Firefox parcial, Samsung Internet sem suporte). Não pode ser parte essencial da experiência.",
+    "Se usar pnpm, a instalação pode falhar com ERR_PNPM_IGNORED_BUILDS e há bug aberto com OneDrive. O Corepack não vem no Node 25+. Tudo isso é atrito desnecessário para iniciante.",
+    "Concorrência com preço baixíssimo e geração instantânea por IA (Hostinger a partir de R$ 10,99/mês em contrato de 48 meses; Wix com CWV muito bom). O diferencial tem que ser design sob medida por nicho, velocidade medida e atendimento, não o simples fato de o site ser feito por IA.",
+    "Site estático sem CMS: o cliente não edita sozinho. Toda mudança passa por você, o que é bom como receita recorrente mas pesa na operação. Formulário de contato precisa de serviço externo (ex.: Netlify Forms) e de cuidado com LGPD/RGPD (fora do escopo desta pesquisa).",
+    "Mudanças corporativas (Astro na Cloudflare, Tailwind na Shopify): risco baixo porque tudo segue MIT, mas vale acompanhar.",
+    "O create-astro atual (main) gera AGENTS.md mandando usar astro dev --background, que no Windows não funciona da mesma forma. A IA pode tentar e travar esperando o servidor."
+   ],
+   "perguntas": [
+    "O astro dev --background funciona no Windows quando a flag é passada à mão, ou só em macOS/Linux? Testar na máquina do usuário.",
+    "A versão publicada do create-astro (5.2.4 no npm) já gera AGENTS.md/CLAUDE.md, ou isso só está na branch main? E o --add tailwind funciona direto no create? Testar com --dry-run.",
+    "Os clientes vão querer editar o conteúdo sozinhos? Se sim, qual CMS headless ou editor simples usar (decisão que muda a arquitetura)?",
+    "Onde hospedar e quem paga: Netlify (já usado), Cloudflare Pages ou hospedagem do cliente? Quais os limites do plano gratuito para uso comercial com vários clientes? (Não verificado nesta pesquisa.)",
+    "Algum cliente vai precisar de pt-BR e pt-PT no mesmo site, ou cada um atende só um país?",
+    "Qual o piso de navegador/aparelho aceitável (iOS abaixo de 16.4)? Existe dado de audiência por nicho no Brasil e em Portugal?",
+    "Não há benchmark independente de acerto de LLM em Astro vs Next.js. Vale o usuário montar um teste próprio: gerar 3 sites de nicho no template e medir quantas correções manuais foram necessárias.",
+    "Quais integrações cada nicho exige (WhatsApp, Google Maps, agendamento online, Google Business, pixel de anúncios)? Elas afetam JS enviado, CWV e consentimento de cookies."
+   ]
+  },
+  {
+   "key": "infra",
+   "verificacao": {
+    "verificacoes": [
+     {
+      "afirmacao": "Vercel Hobby é só para uso pessoal não comercial; receber pagamento para criar, atualizar ou hospedar o site conta como uso comercial.",
+      "veredito": "confirmado",
+      "correcao": "Nenhuma. A página (atualizada em 14/09/2026) diz exatamente isso e exige o plano Pro ou Enterprise.",
+      "fonte": "https://vercel.com/docs/limits/fair-use-guidelines"
+     },
+     {
+      "afirmacao": "Netlify Free: 300 créditos por mês, limite rígido, deploy de produção custa 15 créditos, banda 20 créditos por GB, requisições 2 créditos a cada 10 mil, Forms ilimitados.",
+      "veredito": "confirmado",
+      "correcao": "Nenhuma.",
+      "fonte": "https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/credit-based-pricing-plans/"
+     },
+     {
+      "afirmacao": "Netlify Personal custa US$ 9 por mês com 1.000 créditos (recarga de 500 por US$ 5). Pro vai de US$ 20 a US$ 126 por mês, com 3.000 a 20.000 créditos (recarga de 1.500 por US$ 10).",
+      "veredito": "confirmado",
+      "correcao": "Complemento: nos planos Pro acima de 3.000 créditos (US$ 33, 63, 95 e 126), os créditos não usados passam para o mês seguinte. O Pro inclui 3 builds simultâneos e membros ilimitados no time.",
+      "fonte": "https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/credit-based-pricing-plans/"
+     },
+     {
+      "afirmacao": "No Cloudflare Workers, as requisições a arquivos estáticos são gratuitas e ilimitadas no Free e no Paid.",
+      "veredito": "confirmado",
+      "correcao": "Ressalva: se você usar a opção run_worker_first no Free e passar do limite de requisições, essas requisições recebem erro 429.",
+      "fonte": "https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/"
+     },
+     {
+      "afirmacao": "Registro.br cobra R$ 40,00 por ano para .com.br.",
+      "veredito": "nao_confirmado",
+      "correcao": "A página voltou vazia quando tentei consultar (ela é carregada via JavaScript). Confira o valor direto em registro.br antes de passar para o cliente.",
+      "fonte": "https://registro.br/dominio/"
+     },
+     {
+      "afirmacao": "Web3Forms: Free com 250 envios por mês, Pro US$ 12 por mês no anual, Agency US$ 33 por mês no anual.",
+      "veredito": "nao_confirmado",
+      "correcao": "A página de preços respondeu HTTP 403 e não deu para ler. Verifique manualmente no navegador.",
+      "fonte": "https://web3forms.com/pricing"
+     }
+    ],
+    "achados_novos_importantes": [
+     "No Vercel Hobby, as diretrizes típicas de uso por mês são 100 GB de Fast Data Transfer e 1 milhão de invocações de função. O Pro usa CDN com preço fixo (Flat Rate CDN) mais crédito incluído. Fonte: https://vercel.com/docs/limits/fair-use-guidelines",
+     "Observação do processo: por limite de esforço, só verifiquei 6 dos cerca de 22 achados. Os demais (GitHub Pages, Turnstile, regras do .pt, DL 125/2025, Email Routing, Zoho, Workspace, Lei 41/2004, ANPD, CMS, OneDrive) continuam sem verificação independente e devem ser tratados como não confirmados até alguém checar."
+    ]
+   },
+   "recomendacoes": [
+    "Hospedagem padrão: Cloudflare Workers com static assets, numa conta Cloudflare da agência. Um Worker por cliente, deploy automático pelo GitHub (Workers Builds) e preview URL para o cliente aprovar antes de publicar. Enquanto o site for só estático, o custo fica em zero. O Free comporta até 100 Workers por conta. Se passar disso, ou se precisar de mais builds, assine o Workers Paid (US$ 5/mês).",
+    "Não use Vercel Hobby nem GitHub Pages para sites de clientes: os dois violam os termos no seu modelo de negócio. Vercel só com o Pro (US$ 20 por assento por mês). A Netlify só vale a pena se você quiser muito o Netlify Forms, e mesmo assim em plano pago (Personal ou Pro), acompanhando o consumo de créditos. Não coloque a carteira de clientes no Free, porque um único estouro pausa todos os sites.",
+    "Formulário de contato no começo: Web3Forms Free com honeypot e hCaptcha, uma chave por cliente e página de agradecimento própria. Antes de passar de uns 10 clientes, confirme se o limite de 250 envios é por conta ou por chave. Se for por conta, migre para o Agency (US$ 33/mês no anual) ou crie um endpoint próprio num Worker com Turnstile e envio por um serviço de e-mail transacional.",
+    "Com Turnstile, organize os domínios por widget (até 10 hostnames cada, 20 widgets por conta), para não bater o teto de 200 domínios sem perceber.",
+    "Domínio sempre em nome do cliente: CPF/CNPJ dele no Registro.br e dados dele validados no .pt. A agência fica como contato administrativo ou técnico (no .br) e cuida do DNS, apontado para a Cloudflare. Deixe no contrato quem paga a renovação (.com.br custa R$ 40/ano) e cobre o domínio à parte, sem margem escondida. No .pt, avise o cliente de que ele vai receber códigos de confirmação por e-mail e telefone.",
+    "E-mail em três níveis: (1) grátis com Cloudflare Email Routing, para quem só quer receber em contato@ no Gmail pessoal (lembrando que não dá para responder pelo domínio); (2) Zoho Mail Free, para até 5 caixas usadas pelo navegador ou pelo app; (3) Google Workspace, para quem precisa de algo robusto (R$ 40,90 por usuário por mês no Brasil, sem impostos). Venda como adicional e deixe o cliente como titular da conta de e-mail.",
+    "Analytics: use Cloudflare Web Analytics como padrão e peça ao suporte para ampliar o limite de 10 sites antes de crescer. Se o cliente quiser relatórios mais bonitos, ofereça Plausible como extra pago.",
+    "Para tentar entregar sites sem banner de cookies: fontes hospedadas no próprio site, nada de Google Maps ou YouTube embutidos (use imagem estática com link ou carregamento só no clique), nenhum pixel de anúncio e analytics sem cookies. Se o cliente pedir Meta Pixel ou GA4, o banner com botão de rejeitar é obrigatório, principalmente em Portugal. Coloque sempre página de Política de Privacidade, porque o formulário coleta dados pessoais.",
+    "CMS: o padrão deve ser um plano mensal de manutenção feito por você com a IA (por exemplo, X alterações por mês). Ofereça CMS só para quem atualiza com frequência, como cardápio, preços ou equipe, e de preferência com Pages CMS (convite por e-mail) mexendo apenas em arquivos de conteúdo (JSON ou Markdown), nunca no layout. Evite TinaCloud (custo por projeto) e Keystatic em modo GitHub (exige servidor).",
+    "Ambiente local: tire os projetos do OneDrive e trabalhe em algo como C:\\dev\\sites\\<cliente>, um caminho curto e sem acento. Faça o backup pelo Git: um repositório privado por cliente no GitHub, mais um repositório 'template-base' para clonar. Se tiver espaço, crie um Dev Drive (50 GB) para projetos e cache do npm. Atualize o Git para a 2.55.0 com o winget, instale o GitHub CLI e abra o Claude Code já na pasta C:\\dev\\sites."
+   ],
+   "riscos": [
+    "Concentração: uma única conta Cloudflare ou Netlify da agência com todos os clientes vira ponto único de falha. Uma suspensão, cobrança recusada ou estouro de limite derruba todo mundo. Planos gratuitos também mudam sem aviso: a Netlify trocou para créditos em 2025 e o Git Gateway foi descontinuado.",
+    "Violação de termos: sites de clientes no Vercel Hobby ou no GitHub Pages podem ser suspensos a qualquer momento, e o prejuízo recai sobre a relação com o cliente.",
+    "Domínio em nome da agência gera disputa quando o cliente quer sair, e o registro do nome é responsabilidade exclusiva do titular. Se uma renovação passar sem pagamento, o domínio pode ser perdido. No .pt, dado de titular não validado bloqueia transferência e troca de titular.",
+    "Formulários de terceiros (Web3Forms, Formspree) guardam e processam dados pessoais fora do Brasil e da UE. Isso pede política de privacidade, e no Brasil pode envolver as regras de transferência internacional da ANPD (Resolução CD/ANPD nº 19/2024). A chave do Web3Forms fica visível no HTML e pode ser usada para spam.",
+    "Quando o limite mensal de envios estoura, o Web3Forms simplesmente para de aceitar mensagens, e o cliente perde contatos sem ficar sabendo.",
+    "E-mail: com o Cloudflare Email Routing, o cliente responde de um endereço pessoal, o que parece pouco profissional. Configurar errado SPF, DKIM ou DMARC nos planos pagos leva o e-mail para o spam.",
+    "Cookies: basta um vídeo do YouTube, um mapa do Google ou um pixel adicionado depois para o site passar a exigir banner. Em Portugal a CNPD fiscaliza isso.",
+    "CMS: o Sveltia ainda está em beta e pode quebrar entre versões. Qualquer CMS dá ao cliente o poder de estragar o visual ou publicar erro, e a culpa acaba caindo em você.",
+    "OneDrive: node_modules e .git dentro de pasta sincronizada causam arquivos travados (erros EPERM), conflitos de sincronização, uploads enormes e até repositório corrompido. Caminhos com acento também podem quebrar algumas ferramentas (isso é estimativa, não teste).",
+    "Valores em dólar (Vercel, Netlify, Web3Forms, Plausible) variam com o câmbio e com o IOF no cartão, e isso afeta a margem do pacote mensal."
+   ],
+   "perguntas": [
+    "O limite de 250 envios por mês do Web3Forms Free vale por conta ou por chave de acesso?",
+    "O limite flexível de 10 sites por conta do Cloudflare Web Analytics também vale para sites servidos pela própria Cloudflare (Workers ou Pages com proxy)? Até quanto o suporte amplia?",
+    "O Self-Serve Subscription Agreement da Cloudflare restringe revenda ou uso por agência no plano Free?",
+    "Qual é o preço oficial do Google Workspace Business Starter em euros para Portugal e do Zoho Mail Lite em reais e em euros?",
+    "Qual é a posição da CNPD sobre analytics sem cookies e sem armazenamento local? Dispensa consentimento? A CNPD anunciou em 2021 que publicaria orientações gerais, e não verifiquei se isso saiu.",
+    "A ANPD aceita legítimo interesse como base legal para métricas de audiência agregadas, sem consentimento? Não confirmei no texto do guia.",
+    "O cliente vai pagar o domínio e o e-mail direto no cartão dele, ou você vai pagar e repassar? Isso muda quem é titular e o risco de inadimplência.",
+    "A conta OneDrive do usuário é pessoal ou corporativa (Microsoft 365)? Só a corporativa poderia usar a política de exclusão de node_modules.",
+    "Quantos sites por mês você pretende publicar no início? Isso decide quando sair do Free da Cloudflare (100 Workers, 3.000 minutos de build)."
+   ]
+  },
+  {
+   "key": "legal",
+   "verificacao": {
+    "verificacoes": [
+     {
+      "afirmacao": "Resolução CD/ANPD nº 2/2022, art. 11: pequeno porte dispensado de encarregado, mas deve ter canal de comunicação com o titular.",
+      "veredito": "confirmado",
+      "correcao": "Correto. O texto diz que o agente de pequeno porte não é obrigado a indicar encarregado e, se não indicar, deve disponibilizar canal de comunicação com o titular.",
+      "fonte": "https://www.gov.br/anpd/pt-br/acesso-a-informacao/institucional/atos-normativos/regulamentacoes_anpd/resolucao-cd-anpd-no-2-de-27-de-janeiro-de-2022"
+     },
+     {
+      "afirmacao": "Clínicas, dentistas e psicólogos que coletam dado de saúde pelo site podem cair na exceção de alto risco.",
+      "veredito": "errado",
+      "correcao": "Precisa de ajuste. Pelo art. 4 da Resolução, o alto risco exige pelo menos UM critério geral (tratamento em larga escala, ou que possa afetar significativamente direitos e interesses fundamentais) MAIS pelo menos UM critério específico (entre eles, uso de dado sensível). Um consultório pequeno que recebe dado de saúde por formulário normalmente não cumpre o critério geral, então não perde o regime simplificado só por isso. O art. 3 também exclui quem passa dos limites de faturamento ou pertence a grupo econômico que passa deles. Confira o texto do art. 4 antes de afirmar.",
+      "fonte": "https://www.gov.br/anpd/pt-br/acesso-a-informacao/institucional/atos-normativos/regulamentacoes_anpd/resolucao-cd-anpd-no-2-de-27-de-janeiro-de-2022"
+     },
+     {
+      "afirmacao": "DL 7/2004, art. 10: identificação do prestador (nome, morada, e-mail, registo, NIF, ordem profissional).",
+      "veredito": "nao_confirmado",
+      "correcao": "Não consegui ler o texto no Diário da República (a página veio vazia). Pelo que conheço, o conteúdo bate com a Diretiva 2000/31/CE, art. 5, mas não confirmei a redação portuguesa.",
+      "fonte": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2004-34510975"
+     },
+     {
+      "afirmacao": "Os demais achados (CFM 2.336/2023, CFO-196/2019, Provimento 205/2021, CRECI, Livro de Reclamações, RAL, ERS, AMI, EAA/DL 82/2022, AI Act art. 50, cookies Lei 41/2004)",
+      "veredito": "nao_confirmado",
+      "correcao": "Não foram verificados nesta rodada, que teve pouco orçamento. Confira cada um na fonte primária antes de passar para o cliente. Isso vale principalmente para o AI Act e o Digital Omnibus, que mudam rápido.",
+      "fonte": "sem fonte"
+     }
+    ],
+    "achados_novos_importantes": [
+     "Resolução CD/ANPD nº 2/2022: para o regime simplificado cair por alto risco, é preciso somar um critério geral e um específico (art. 4). Além disso, o art. 3 exclui do regime quem passa dos limites de receita, mesmo sem tratamento de alto risco. Fonte: https://www.gov.br/anpd/pt-br/acesso-a-informacao/institucional/atos-normativos/regulamentacoes_anpd/resolucao-cd-anpd-no-2-de-27-de-janeiro-de-2022"
+    ]
+   },
+   "recomendacoes": [
+    "Criar no Claude Code um 'bloco legal' reutilizável por país: rodapé BR (razão social, CNPJ recomendado, endereço, link Política de Privacidade, canal de dados) e rodapé PT (denominação, NIF, morada, e-mail, registo comercial, link Livro de Reclamações, entidade RAL, Política de Privacidade e Cookies).",
+    "Criar campos por profissão no briefing do cliente: CRM/RQE e diretor técnico (médicos), CRO (dentistas), OAB (advogados), CRECI-J (imobiliárias), CRP/CRN/CREFITO, e em PT: registo ERS, licença, cédula profissional, licença AMI. Não publicar sem esses números preenchidos.",
+    "Evitar cookies de terceiros por padrão (analytics sem cookies, mapa por imagem estática com link). Assim o banner de cookies só entra quando o cliente pedir Pixel ou Google Analytics. Em Portugal, se houver, usar banner com rejeitar em igual destaque.",
+    "Formulário mínimo: nome, contato e mensagem, com texto curto indicando finalidade e link para a política. Em sites de saúde, não pedir sintomas ou diagnóstico no formulário.",
+    "Usar imagens reais do cliente sempre que possível; bancos gratuitos só com pessoas genéricas; imagens de IA apenas ilustrativas, nunca como 'nossa equipe' ou 'nossa clínica', e nunca 'antes e depois' gerado por IA.",
+    "Adotar WCAG 2.1 AA como padrão técnico em todos os sites (contraste, alt nas imagens, navegação por teclado, labels em formulários). Cobre o art. 63 da LBI e deixa pronto para o EAA.",
+    "Colocar no contrato que o conteúdo regulamentado (textos, números de registro, promessas) é responsabilidade do cliente e que ele aprova antes da publicação. Os textos de política de privacidade são modelo, não parecer jurídico."
+   ],
+   "riscos": [
+    "Profissional de saúde ou advogado pode ser processado eticamente pelo conselho/ordem por conteúdo do site, e culpar o desenvolvedor. Promessa de resultado e antes/depois são os pontos mais sensíveis.",
+    "Em Portugal, falta de Livro de Reclamações Eletrónico ou de informação RAL gera contraordenação com coima para o cliente; é fácil de fiscalizar.",
+    "Colocar Google Analytics ou Meta Pixel sem consentimento em site português é violação direta da Lei 41/2004.",
+    "Imagens de IA hiper-realistas de pessoas podem ser vistas como publicidade enganosa e, na UE, como deepfake sem rótulo.",
+    "Políticas de privacidade genéricas geradas por IA podem citar bases legais, prazos ou dados errados; precisam ser revisadas para cada cliente.",
+    "Esta pesquisa não verificou os regulamentos de publicidade do CFP, CFN, COFFITO e das ordens portuguesas; confiar na memória aqui é arriscado."
+   ],
+   "perguntas": [
+    "Quais são o número e o texto vigente das normas de publicidade do CFP, CFN, COFFITO e de estética (biomedicina, CFBM) em 2026?",
+    "Quais regulamentos de publicidade vigentes na Ordem dos Médicos, Ordem dos Médicos Dentistas, Ordem dos Advogados e Ordem dos Psicólogos, e o que exigem no site?",
+    "A CNPD publicou em 2025/2026 orientação atualizada sobre banners de cookies?",
+    "A ANPD mudou em 2025/2026 o regime de agentes de pequeno porte ou publicou regulamento de cookies vinculante?",
+    "Os clientes vão ter agendamento ou pagamento online? Isso pode puxar Decreto 7.962/2013 no Brasil e o DL 82/2022 em Portugal.",
+    "Vale ter parceria com advogado de cada país para validar os modelos de política e rodapé antes de escalar as vendas?"
+   ]
+  },
+  {
+   "key": "mercado",
+   "verificacao": {
+    "verificacoes": [
+     {
+      "afirmacao": "82% dos usuários de WhatsApp no Brasil já se comunicam com marcas pelo app (Opinion Box/Mobile Time, 1.126 entrevistados, junho de 2025, margem de 2,9 p.p.).",
+      "veredito": "confirmado",
+      "correcao": "Os números batem com a fonte. A mesma pesquisa diz que os usos mais citados são tirar dúvidas (75%), suporte (67%) e compras (60%). Se sair uma edição 2026, vale trocar pelo número mais novo.",
+      "fonte": "https://blog.opinionbox.com/pesquisa-whatsapp-no-brasil/"
+     },
+     {
+      "afirmacao": "Portugal: 9,26 milhões de utilizadores de internet em outubro de 2025 (89,0%); YouTube 72,9%, Instagram 61,0%, Facebook 60,5%, LinkedIn 58,6%.",
+      "veredito": "confirmado",
+      "correcao": "Confere. Um detalhe: os percentuais são sobre a população total (e não sobre os utilizadores de internet). O relatório também diz que 81,9% dos utilizadores de internet usam pelo menos uma rede social. Não traz número de WhatsApp.",
+      "fonte": "https://datareportal.com/reports/digital-2026-portugal"
+     },
+     {
+      "afirmacao": "Digital 2025 Portugal aponta WhatsApp como a plataforma mais usada, com cerca de 90% entre utilizadores de redes sociais.",
+      "veredito": "nao_confirmado",
+      "correcao": "Não consultei a fonte primária (DataReportal Digital 2025 Portugal). A fonte citada é uma newsletter secundária. Trate o número como indicativo até conferir no relatório.",
+      "fonte": "https://datareportal.com/reports/digital-2025-portugal (não verificado)"
+     },
+     {
+      "afirmacao": "Faixas de preço de sites no Brasil e em Portugal segundo blogs comerciais.",
+      "veredito": "nao_confirmado",
+      "correcao": "Não reabri os blogs nesta rodada. De qualquer forma são fontes comerciais, então servem como referência e não como dado de mercado.",
+      "fonte": "fontes citadas pela pesquisa (não verificadas)"
+     },
+     {
+      "afirmacao": "Existem concorrentes portugueses vendendo 'sites com IA' (sitescomia.pt).",
+      "veredito": "nao_confirmado",
+      "correcao": "Não abri a página nesta rodada. A conclusão ('feito por IA' não é diferencial) faz sentido de qualquer jeito.",
+      "fonte": "https://sitescomia.pt/quanto-custa-criar-site-portugal/ (não verificado)"
+     },
+     {
+      "afirmacao": "Em Portugal é comum e esperado mostrar o livro de reclamações eletrónico em sites de negócios.",
+      "veredito": "confirmado",
+      "correcao": "Não é só costume, é obrigação legal. O Decreto-Lei 74/2017 (que alterou o DL 156/2005) criou o formato eletrónico, obrigatório para os fornecedores abrangidos desde 1 de julho de 2018. Quem tem site deve pôr em destaque o acesso ao Livro de Reclamações Eletrónico (livroreclamacoes.pt). Antes de montar o template, confira o artigo exato no Diário da República.",
+      "fonte": "https://diariodarepublica.pt/dr/detalhe/decreto-lei/74-2017-107541411 ; https://www.asae.gov.pt/reclamacoes-e-denuncias/livro-de-reclamacoes.aspx"
+     }
+    ],
+    "achados_novos_importantes": [
+     "Portugal, RAL: a Lei 144/2015 obriga fornecedores que vendem a consumidores a informar em qual entidade de resolução alternativa de litígios estão (ou podem estar) e a dar o site dela. O template PT deve ter essa informação no rodapé. Não reabri o texto nesta rodada, então confira no Diário da República.",
+     "Advocacia no Brasil: a publicidade é regulada pelo Provimento 205/2021 do Conselho Federal da OAB. Não reabri o texto nesta rodada, confira em oab.org.br antes de escrever os textos para advogados.",
+     "WhatsApp em Portugal: o Digital 2026 Portugal não traz número de WhatsApp. Não use 90% como dado de 2026."
+    ]
+   },
+   "recomendacoes": [
+    "Começar por 3 nichos com template próprio (saúde/estética, salão/barbearia, restaurante) e depois clonar a estrutura para os outros.",
+    "Criar no projeto um arquivo de locale por país (pt-BR e pt-PT) com vocabulário, formatos de telefone, CEP/código postal, CNPJ/NIF e tratamento, e pedir ao Claude que siga esse arquivo em todo texto.",
+    "O CTA principal nos dois países deve ser um link wa.me com mensagem pré-preenchida. Em Portugal, colocar ao lado o telefone clicável e o e-mail.",
+    "Para restaurantes, iFood, Glovo, Uber Eats e TheFork entram só como botões de link externo. Não montar carrinho.",
+    "Vender um pacote com preço fechado e mensalidade de manutenção. Mostrar portfólio de demos por nicho antes de prospectar.",
+    "Posicionar como 'site profissional pronto em 72 h, sem você mexer em nada' e não como 'site feito por IA'.",
+    "Antes de vender para advogados e profissionais de saúde, ler as regras de publicidade da OAB/Ordem dos Advogados e dos conselhos ou ordens profissionais."
+   ],
+   "riscos": [
+    "As faixas de preço vêm de blogs de agências com interesse comercial. Podem não refletir o que o pequeno negócio aceita pagar.",
+    "Um texto em pt-BR num site português (ou o contrário) derruba a credibilidade. É preciso revisão humana ou um glossário rígido.",
+    "Publicidade irregular em nichos regulados (advocacia, medicina, odontologia, psicologia) pode gerar problema ético ao cliente e à sua reputação.",
+    "Há concorrência de preço com construtores baratos e com outros vendedores de 'site com IA', principalmente em Portugal.",
+    "RGPD/LGPD: formulários, embeds do Google Maps, Instagram e analytics exigem política de privacidade e, em Portugal, banner de cookies com opção de recusar."
+   ],
+   "perguntas": [
+    "Qual é o percentual atual de portugueses que contactam empresas pelo WhatsApp? Não achei dado primário.",
+    "Quais são os preços atuais de Wix, Hostinger e Webflow em BRL e EUR? Falta verificar nas páginas oficiais.",
+    "Quais obrigações exatas (livro de reclamações eletrónico, RAL) valem para sites institucionais em Portugal? Falta verificar no Diário da República.",
+    "O que dizem as normas atuais de publicidade da OAB, da Ordem dos Advogados, do CFM, do CFO e da Ordem dos Médicos sobre sites?",
+    "Qual país o usuário vai atacar primeiro? Isso muda preço, tom e template inicial."
+   ]
+  },
+  {
+   "key": "design",
+   "verificacao": {
+    "verificacoes": [
+     {
+      "afirmacao": "Skill frontend-design: 1 ou 2 famílias bem distintas, linhas com menos de 80 caracteres.",
+      "veredito": "confirmado",
+      "correcao": "Confirmado. O texto diz para usar uma ou duas famílias, e se forem duas, claramente distintas; linhas com menos de 80 caracteres por padrão (serifadas podem ser um pouco mais longas, com mais entrelinha).",
+      "fonte": "https://raw.githubusercontent.com/anthropics/skills/main/skills/frontend-design/SKILL.md"
+     },
+     {
+      "afirmacao": "Skill lista o que evitar: creme com terracota, rótulos em caixa alta, 01/02/03 sem sequência, fade-slide em cada seção, cards SaaS iguais, separadores com ponto.",
+      "veredito": "errado",
+      "correcao": "Parcialmente certo. Confirmados: fundo creme perto de #F4F1EA com terracota perto de #D97757, rótulos em caixa alta, marcadores 01/02/03 sem conteúdo sequencial, fade-and-slide-up em cada seção e hover em todo card. A skill também cita destacar uma única palavra do título. Não encontrei na versão lida os itens 'cards SaaS com o mesmo arredondamento' e 'separadores com ponto no meio'; remova ou marque como não confirmados.",
+      "fonte": "https://raw.githubusercontent.com/anthropics/skills/main/skills/frontend-design/SKILL.md"
+     },
+     {
+      "afirmacao": "Cor: sistema de 4 a 6 cores nomeadas, partindo do setor, um elemento marcante carrega a ousadia.",
+      "veredito": "nao_confirmado",
+      "correcao": "Confirmado só o trecho '4 a 6 valores hex nomeados' num sistema compacto de tokens. As partes 'partir do vocabulário do setor' e 'um único elemento marcante' não apareceram no resumo da página que consegui ler.",
+      "fonte": "https://raw.githubusercontent.com/anthropics/skills/main/skills/frontend-design/SKILL.md"
+     },
+     {
+      "afirmacao": "Movimento: um momento orquestrado em vez de efeitos espalhados, respeitar prefers-reduced-motion.",
+      "veredito": "confirmado",
+      "correcao": "Confirmado. A skill também diz que movimento disparado pelo usuário (abrir, expandir) é aceitável.",
+      "fonte": "https://raw.githubusercontent.com/anthropics/skills/main/skills/frontend-design/SKILL.md"
+     },
+     {
+      "afirmacao": "GSAP 100% gratuito para uso comercial, incluindo plugins antes pagos, sob a Standard License com restrições.",
+      "veredito": "confirmado",
+      "correcao": "Confirmado. A proibição principal é usar o GSAP para criar ferramenta visual de animação que concorra com a Webflow. Código gerado por IA usando GSAP é permitido, segundo o FAQ.",
+      "fonte": "https://gsap.com/community/standard-license/"
+     },
+     {
+      "afirmacao": "Astro Fonts API nativa com provedores Google, Fontsource e Bunny; self-host, preload e fallback; versão estável não confirmada.",
+      "veredito": "desatualizado",
+      "correcao": "O guia atual apresenta a API sem o selo experimental, e a lista de provedores embutidos é maior: Adobe, Bunny, Fontshare, Fontsource, Google, Google Icons e NPM, além de arquivos locais. O preload é feito pela propriedade preload do componente <Font />. A versão exata em que ficou estável continua sem confirmação.",
+      "fonte": "https://docs.astro.build/en/guides/fonts/"
+     },
+     {
+      "afirmacao": "Chrome DevTools MCP oficial tem lighthouse_audit; já está ativo no ECC do usuário.",
+      "veredito": "confirmado",
+      "correcao": "A ferramenta mcp__plugin_ecc_chrome-devtools__lighthouse_audit aparece no ambiente do usuário, junto com performance_start_trace e performance_stop_trace para medir performance. Não reli a documentação para confirmar que performance fica fora do lighthouse_audit.",
+      "fonte": "lista de ferramentas do ambiente do usuário; https://github.com/ChromeDevTools/chrome-devtools-mcp"
+     },
+     {
+      "afirmacao": "Playwright MCP da Microsoft tira screenshots e usa a árvore de acessibilidade.",
+      "veredito": "nao_confirmado",
+      "correcao": "Não consultei a fonte nesta rodada. É um repositório conhecido, mas confira o README antes de afirmar.",
+      "fonte": "https://github.com/microsoft/playwright-mcp (não lido)"
+     }
+    ],
+    "achados_novos_importantes": [
+     "A skill frontend-design também aponta como sinal de design genérico de IA destacar só uma palavra ou frase no título (fonte: SKILL.md oficial da Anthropic).",
+     "A Fonts API do Astro também traz Fontshare, Adobe e NPM como provedores embutidos e aceita arquivos de fonte locais (fonte: docs.astro.build/en/guides/fonts).",
+     "O ambiente do usuário já tem o Chrome DevTools MCP pelo ECC, com resize_page e take_screenshot. Isso permite fazer o loop de conferência visual em 375, 768 e 1440 sem instalar o Playwright MCP (fonte: ferramentas carregadas na sessão)."
+    ]
+   },
+   "recomendacoes": [
+    "Crie um CLAUDE.md no projeto base com as regras da skill frontend-design, mais uma lista anti-padrão explícita: gradiente roxo, Inter em tudo, emoji no lugar de ícone, hero centralizado com blob, cards todos iguais.",
+    "Monte um arquivo de direção visual por nicho (clínica, advocacia, barbearia etc.) com par de fontes, paleta de 4 a 6 tokens, estilo de foto e 2 ou 3 sites de referência com screenshot.",
+    "Use Astro + Tailwind, com fontes pela API nativa do Astro (Fontsource ou Google baixadas para o próprio domínio) e ícones Lucide ou Phosphor via astro-icon.",
+    "Para motion, use CSS e View Transitions por padrão e GSAP (grátis) só num momento de destaque, sempre com prefers-reduced-motion.",
+    "Priorize fotos reais do cliente, com tratamento de cor igual em todas, exportadas em AVIF/WebP pelo componente de imagem do Astro.",
+    "Rode o loop de QA no fim de cada seção: screenshot em 375/768/1440 com o Playwright ou Chrome DevTools MCP, lighthouse_audit, e depois peça ao Claude uma autocrítica contra a lista anti-padrão antes de corrigir."
+   ],
+   "riscos": [
+    "Kits de componentes usados sem customização trazem de volta a cara de template.",
+    "Licenças de fotos de banco e de imagens geradas por IA não foram verificadas nesta rodada. Pode haver risco comercial ou de direito de imagem.",
+    "Carregar Google Fonts pelo CDN pode gerar questionamento de RGPD em sites portugueses.",
+    "Se o motion for exagerado, piora a performance (LCP/INP) e a acessibilidade.",
+    "A pasta no OneDrive pode sincronizar node_modules e deixar as builds lentas ou com erro. Melhor manter os projetos fora do OneDrive."
+   ],
+   "perguntas": [
+    "Em qual versão do Astro a API de fontes ficou estável, e qual é a sintaxe atual exata?",
+    "Quais são hoje os termos de uso comercial de Unsplash, Pexels e dos geradores de imagem por IA (Firefly, Midjourney, Imagen)?",
+    "Quais são as versões atuais de daisyUI, Flowbite, Starwind e Preline, e quais delas são compatíveis com o Tailwind v4?",
+    "O que a Standard License do GSAP proíbe em detalhe (por exemplo, uso em ferramentas que concorram com a Webflow)?"
+   ]
+  },
+  {
+   "key": "seo",
+   "verificacao": {
+    "verificacoes": [
+     {
+      "afirmacao": "FAQ rich result deixou de aparecer em 7/5/2026 e a documentação foi removida em 15/6/2026",
+      "veredito": "confirmado",
+      "correcao": "A página oficial confirma que o recurso não aparece mais no Google Search desde 7 de maio de 2026 e que a documentação foi removida. O resumo que li trouxe o ano do aviso e da remoção de forma inconsistente (2025 ou 2026), então vale abrir o changelog e conferir a data exata. Na prática não muda nada: não conte com FAQ rich result.",
+      "fonte": "https://developers.google.com/search/docs/appearance/structured-data/faqpage"
+     },
+     {
+      "afirmacao": "og:image para WhatsApp: menos de 600 KB, largura de pelo menos 300 px, proporção de até 4:1",
+      "veredito": "confirmado",
+      "correcao": "",
+      "fonte": "https://developers.facebook.com/documentation/business-messaging/whatsapp/link-previews"
+     },
+     {
+      "afirmacao": "LocalBusiness: name e address obrigatórios; telephone, openingHoursSpecification e geo (5 casas decimais) recomendados; priceRange com menos de 100 caracteres; servesCuisine e menu para restaurantes; JSON-LD",
+      "veredito": "confirmado",
+      "correcao": "",
+      "fonte": "https://developers.google.com/search/docs/appearance/structured-data/local-business"
+     },
+     {
+      "afirmacao": "review e aggregateRating só se aplicam a sites que reúnem avaliações de outros negócios, então avaliação da própria empresa não gera estrelas",
+      "veredito": "confirmado",
+      "correcao": "",
+      "fonte": "https://developers.google.com/search/docs/appearance/structured-data/local-business"
+     },
+     {
+      "afirmacao": "Não há garantia de que o LocalBusiness apareça nos resultados",
+      "veredito": "confirmado",
+      "correcao": "",
+      "fonte": "https://developers.google.com/search/docs/appearance/structured-data/local-business"
+     }
+    ],
+    "achados_novos_importantes": [
+     "Nesta rodada só verifiquei 5 dos 22 achados, os que mais pesam na decisão. Os outros (limites dos Core Web Vitals, AI features, hreflang, os 3 fatores do ranking local, robots.txt, diretrizes do GBP) seguem sem verificação independente aqui e continuam como nao_confirmado até alguém checar."
+    ]
+   },
+   "recomendacoes": [
+    "Usar Astro com saída estática (HTML pronto e pouco ou nenhum JS) para ficar folgado nas metas de LCP abaixo de 2,5 s, INP abaixo de 200 ms e CLS abaixo de 0,1. Imagens com width e height definidos, em AVIF ou WebP, e fontes com font-display swap.",
+    "Criar um componente único de SEO no projeto base com title, description, canonical absoluto, og:title, og:description, og:image 1200x630 em JPEG abaixo de 200 KB, og:url, og:locale (pt_BR ou pt_PT) e twitter:card.",
+    "Gerar um JSON-LD por cliente a partir de um arquivo de dados (nome, endereço, telefone, horários, geo, url, @type específico como Dentist ou HairSalon). O mesmo arquivo alimenta o rodapé e a página de contato, e isso garante NAP idêntico.",
+    "Não vender FAQ schema como forma de ganhar destaque no Google, porque esse rich result foi encerrado em maio de 2026. Manter a FAQ só como conteúdo visível, que ajuda o usuário e pode ajudar as IAs a entender a página.",
+    "Só fazer versões pt-BR e pt-PT quando o negócio atender de verdade os dois países. Nesse caso usar URLs separadas (/br/ e /pt/), hreflang recíproco com self-reference e x-default, e configurar i18n no @astrojs/sitemap.",
+    "Incluir em todo projeto: sitemap, robots.txt com a linha Sitemap, 404.html próprio, favicon (SVG mais PNG 48 e 180 apple-touch) e um manifest simples. Depois do deploy, enviar o sitemap no Search Console.",
+    "Tratar o Google Business Profile como parte da entrega: conferir categoria, horários, fotos e link para o site, e orientar o cliente a pedir avaliações.",
+    "Para IA, focar no básico: página indexável, texto claro com serviço, cidade e bairro, dados de contato em HTML visível. O llms.txt é opcional e sem garantia, então não cobrar por ele.",
+    "Checklist para site de uma página: um H1, title e description, canonical, OG testado no WhatsApp, JSON-LD LocalBusiness validado no Rich Results Test, links de WhatsApp e tel clicáveis, mapa com carregamento lazy, Lighthouse mobile verde, sitemap e robots.",
+    "Checklist para site de 4 a 6 páginas: tudo do site de uma página, mais title e description únicos por página, uma página por serviço principal com H1 próprio, links internos, breadcrumbs opcionais, sitemap com todas as URLs, JSON-LD completo só na home ou no contato (nas outras, referência por @id) e 404 testado."
+   ],
+   "riscos": [
+    "A documentação da Meta fala em 600 KB e os relatos práticos em 300 KB. Imagem pesada pode fazer a pré-visualização sumir no WhatsApp, e é por ali que o cliente mais compartilha.",
+    "Prometer ao cliente posição no Google ou aparição em AI Overviews. Não existe garantia, e isso gera conflito na hora de cobrar.",
+    "NAP diferente entre o site, o GBP e os diretórios, ou GBP com palavras-chave no nome, pode causar suspensão do perfil segundo as diretrizes.",
+    "hreflang mal feito (sem reciprocidade) é ignorado, e conteúdo quase idêntico em pt-BR e pt-PT sem hreflang pode competir entre si.",
+    "Os dados de campo dos Core Web Vitals podem não existir para sites pequenos, e aí o cliente não vê número nenhum no Search Console.",
+    "Hospedar a pasta do projeto no OneDrive pode causar conflito de sincronização com node_modules. Isso é uma estimativa, não foi verificado."
+   ],
+   "perguntas": [
+    "Qual é o limite exato de peso da og:image que o WhatsApp aplica hoje? Não existe número oficial abaixo dos 600 KB da Meta.",
+    "ChatGPT search e Perplexity usam schema.org ou llms.txt como sinal? Não encontrei documentação oficial.",
+    "Os clientes que atendem Brasil e Portugal vão querer domínios separados (.com.br e .pt) ou subpastas?",
+    "A lista atual de subtipos de LocalBusiness no schema.org precisa ser confirmada em https://schema.org/LocalBusiness antes de montar os modelos.",
+    "Vai haver regras de conselhos profissionais (CFO, OAB, CFM, Ordem dos Médicos) limitando o conteúdo do site e das avaliações? Isso fica para outro tópico da pesquisa."
+   ]
+  }
+ ],
+ "objecoes": [
+  {
+   "objecao": "Todos os sites ficam numa única conta Cloudflare da agência e num único GitHub. Se a conta for suspensa, se o cartão for recusado ou se você perder o 2FA, cai tudo. Se um cliente sair, não há um jeito limpo de entregar o site a ele. A própria pesquisa aponta essa concentração como ponto único de falha.",
+   "gravidade": "alta",
+   "correcao_proposta": "Crie uma organização no GitHub só para a agência, com 2FA por app e códigos de recuperação impressos. Ative 2FA na Cloudflare e cadastre um segundo e-mail de recuperação. Escreva o docs/saida-cliente.md com o passo a passo de transferir o repositório (Settings > Transfer) e de refazer o Worker na conta do cliente com wrangler deploy. Coloque no contrato que o código-fonte pertence ao cliente depois da quitação. Teste a saída uma vez com um site demo."
+  },
+  {
+   "objecao": "O Web3Forms é o padrão para formulários, mas preço, limite (por conta ou por chave) e comportamento ao estourar o limite não foram confirmados. A página deu 403. A chave fica visível no HTML. Se o limite for por conta, 20 clientes somados passam fácil de 250 envios e as mensagens se perdem sem ninguém ser avisado.",
+   "gravidade": "alta",
+   "correcao_proposta": "Use como padrão só wa.me mais tel:, sem formulário nenhum, até confirmar os termos do Web3Forms no navegador. Para quem exigir formulário, crie um único Worker de formulário da agência com Turnstile, honeypot e envio por e-mail transacional. Guarde os segredos com wrangler secret put, nunca no repositório. Crie também um alerta: um envio de teste semanal agendado que avisa se falhar."
+  },
+  {
+   "objecao": "Não existe um processo para atualizar dependências em 50 repositórios ao longo de anos. A decisão diz que os clientes entregues ficam com versões travadas. Isso vira dívida: daqui a 18 meses o Node 24 sai de suporte (30/04/2028, confirmado), o Workers Builds pode deixar de oferecer a versão travada e cada build pode quebrar num dia em que o cliente só pediu para trocar um telefone.",
+   "gravidade": "alta",
+   "correcao_proposta": "Fixe a versão do Node em cada repositório com o arquivo .nvmrc e o campo engines, e defina NODE_VERSION no build da Cloudflare. Crie um script scripts/atualizar-todos.ps1 que percorre a pasta clientes, roda npm ci e npm run build e grava um relatório. Rode esse script na revisão trimestral. Ative o Dependabot só para alertas de segurança. Atualize a major de cada cliente de uma vez só, no mesmo lote, testando primeiro no template-base."
+  },
+  {
+   "objecao": "Rollback e backup dependem só da Cloudflare (as 100 versões) e do GitHub. As fotos originais do cliente, o briefing, as aprovações por escrito e o contrato não têm lugar definido. Se tudo isso ficar só no OneDrive ou no repositório, mistura dado pessoal com código.",
+   "gravidade": "media",
+   "correcao_proposta": "Documente o rollback no qa-checklist: no painel do Worker vá em Deployments > Rollback, ou rode wrangler rollback. Crie uma tag Git em cada entrega (v1.0-entrega). Guarde fotos originais e aprovações numa pasta do OneDrive fora da fábrica (sem node_modules), por exemplo OneDrive\\Clientes\\nome. Os repositórios guardam só as imagens já tratadas. Uma vez por mês, faça um backup extra dos repositórios com git clone --mirror para um HD externo."
+  },
+  {
+   "objecao": "Os pedidos de alteração de texto não têm fluxo definido. Cada mudança de 'trocar o horário' passa por abrir o Claude Code, fazer build, checagem e deploy, e com 50 clientes isso vira o trabalho inteiro. O plano mensal fala em número fixo de alterações, mas não define o que conta como uma alteração, o prazo de resposta nem o canal.",
+   "gravidade": "alta",
+   "correcao_proposta": "Defina no contrato: pedidos só por um canal (formulário ou e-mail), prazo de 2 dias úteis, e o que é uma alteração (texto ou foto numa seção existente; seção nova é orçamento à parte). Mantenha todo texto editável em src/data/site.ts para que a mudança seja um diff pequeno. Crie a skill alteracao-cliente, que edita só site.ts, roda o build, faz o push e manda o link do preview. Agrupe os pedidos num dia fixo da semana."
+  },
+  {
+   "objecao": "O custo por cliente foi calculado com a infra perto de zero, mas não prevê o que acontece se um plano gratuito mudar. A Netlify já trocou para créditos em 2025 e o Git Gateway foi descontinuado. Os limites de 10 sites do Web Analytics e de 20 widgets do Turnstile não foram verificados e aparecem em torno de 10 a 20 clientes.",
+   "gravidade": "media",
+   "correcao_proposta": "Precifique a mensalidade supondo Workers Paid (US$ 5/mês, confirmado), mais câmbio e IOF, dividido pelos clientes. Assim a margem aguenta a saída do Free. Mantenha um docs/plano-b-hospedagem.md com a migração para Netlify Personal (US$ 9/mês, confirmado): build npm run build, pasta dist. Confira os limites do Web Analytics e do Turnstile no painel antes do 10º cliente."
+  },
+  {
+   "objecao": "A titularidade do domínio está bem definida, mas não a da renovação e do DNS. Se o cliente não renovar o .com.br ou o .pt, o site cai e a culpa recai sobre a agência. A mudança de DNS para a Cloudflare exige acesso que o cliente leigo não sabe dar. O preço de R$ 40/ano do Registro.br não foi confirmado.",
+   "gravidade": "media",
+   "correcao_proposta": "Faça o registro com o cliente numa chamada, na conta dele, com a agência como contato técnico (no .br) para mexer no DNS. Crie uma planilha, ou um arquivo docs/dominios.csv, com data de renovação e titular, e um lembrete agendado 60 dias antes. Confira o preço em registro.br antes de passar ao cliente."
+  },
+  {
+   "objecao": "O passo a passo no PowerShell tem armadilhas para iniciante. Separar comandos com ; faz o próximo rodar mesmo se o anterior falhou. O npm create com -- e várias flags pode ser mal interpretado. O claude mcp add usa um endereço não verificado. E o AGENTS.md gerado pelo create-astro manda usar astro dev --background, que no Windows não roda do mesmo jeito.",
+   "gravidade": "media",
+   "correcao_proposta": "Rode um comando por vez, conferindo a saída de cada um. Use npm create astro@latest template-base -- --template minimal --no-ai (ou apague o AGENTS.md gerado). Antes de usar o MCP de docs do Astro, confira o endereço em docs.astro.build/en/guides/build-with-ai. Coloque no CLAUDE.md: 'nunca rode astro dev pelo agente; use npm run build e npm run preview em terminal separado'."
+  },
+  {
+   "objecao": "Tirar o projeto do OneDrive está certo, mas a pasta C:\\Users\\osmar ainda pode ser redirecionada, e o cache do npm e o Defender continuam deixando o npm install lento em 50 projetos. Também não há regra impedindo que alguém clone de novo dentro da Área de Trabalho.",
+   "gravidade": "baixa",
+   "correcao_proposta": "Use C:\\dev\\fabrica-sites-ia, fora do perfil do usuário, ou um Dev Drive se houver 50 GB livres. Confira com Get-Item que a pasta não está sob o OneDrive. Adicione C:\\dev às exclusões do Defender só depois de entender o risco (é mudança de configuração de segurança, então faça você mesmo). Escreva no CLAUDE.md raiz: 'se o caminho atual contiver OneDrive, pare e avise'."
+  },
+  {
+   "objecao": "Faltam cuidados de segurança básicos: nada impede commitar .env ou chaves, nem proteger o branch main. O Workers Builds publica direto no push, então um erro da IA vai ao ar sem aprovação.",
+   "gravidade": "media",
+   "correcao_proposta": "No template, inclua um .gitignore com .env, .dev.vars e node_modules. Faça o deploy de produção só a partir de tag ou branch de produção, com preview nos outros branches. Ative a proteção de branch e o secret scanning, se o plano permitir (não verificado para repositório privado no Free). Adicione cabeçalhos de segurança num arquivo _headers ou na config do Worker (confirmar suporte em static assets)."
+  },
+  {
+   "objecao": "O QA exige Lighthouse, screenshots em 4 larguras e Rich Results Test manual em cada alteração. Para mudança de texto isso é exagero e vai acabar sendo pulado.",
+   "gravidade": "baixa",
+   "correcao_proposta": "Divida o QA em dois níveis. O nível completo vale para a entrega e para a atualização trimestral. O nível rápido vale para alterações: build sem erro, screenshot em 375 px e checagem do link do WhatsApp. Escreva os dois no docs/qa-checklist.md."
+  },
+  {
+   "objecao": "Nada técnico bloqueia a IA de inventar conteúdo. Depoimentos, números como '+500 pacientes', anos de experiência, CRM, OAB e prêmios podem sair do modelo como placeholder e ir para produção sem ninguém notar. Em nicho regulado, isso gera processo ético para o cliente e publicidade enganosa.",
+   "gravidade": "alta",
+   "correcao_proposta": "Em src/data/site.ts, tipar cada depoimento, número e credencial com os campos 'fonte' (ex.: 'print Google 12/09/2026', 'autorização assinada') e 'aprovadoPeloCliente: true'. Criar um script prebuild em Node que faça o build falhar se: um campo desses estiver sem fonte; aparecer lorem, 'Cliente Satisfeito', 'João S.' ou '[PLACEHOLDER]'; houver número no texto que não exista em site.ts. No CLAUDE.md: 'Proibido criar depoimento, estatística, registro profissional, prêmio ou tempo de mercado. Se faltar, deixe a seção oculta e liste o que falta'. Sem dado real, a seção Depoimentos não aparece."
+  },
+  {
+   "objecao": "Todo cliente do mesmo nicho recebe a mesma paleta hex, o mesmo par de fontes e a mesma ordem de seções. A partir do segundo dentista, o portfólio fica parecendo template, que é justamente o que Wix e Framer já entregam. Além disso, a stack não vem com nenhuma técnica visual que torne o site difícil de copiar.",
+   "gravidade": "alta",
+   "correcao_proposta": "Tratar o playbook do nicho como ponto de partida e não como resultado. A skill direcao-visual deve gerar 3 direções diferentes, tirando cores da identidade real do cliente (logo, fachada, fotos). Cada direção muda pelo menos layout do hero, escala tipográfica e um elemento-assinatura (ex.: grid editorial, tipografia grande, foto recortada). Criar 2 ou 3 variantes estruturais por seção, que não sejam só variações de cor. Guardar em docs/portfolio.md o que já foi usado em cada cliente e proibir repetir hero, fonte de título ou acento no mesmo nicho e na mesma cidade."
+  },
+  {
+   "objecao": "Ninguém mede se o resultado ganha dos concorrentes. Não existe comparação com um template Framer ou Wix do mesmo nicho, então 'alta qualidade visual' é só palpite.",
+   "gravidade": "alta",
+   "correcao_proposta": "Antes de vender, montar os demos de 3 nichos e colocar cada um lado a lado com 2 templates pagos, Framer ou Wix, do mesmo nicho, em screenshots de 375 e 1440 px. Mostrar para 5 donos de negócio sem dizer qual é qual e anotar qual escolheriam. Registrar o resultado em docs/benchmark.md e repetir a cada revisão trimestral do template. Se perder, ajustar o template antes de prospectar."
+  },
+  {
+   "objecao": "A autocrítica visual é subjetiva e a própria IA faz, avaliando o próprio trabalho. A lista anti-padrão pega clichês, mas não pega hierarquia fraca, ritmo monótono, foto ruim ou contraste só de enfeite.",
+   "gravidade": "media",
+   "correcao_proposta": "Montar uma rubrica com nota de 1 a 5 em 6 critérios: hierarquia no primeiro viewport, CTA visível sem rolar em 375 px, ritmo de espaçamento, consistência das fotos, assinatura visual, legibilidade. Rodar numa sessão separada do Claude (subagente ou skill ecc:gan-design / santa-loop) que só recebe os screenshots e a rubrica, sem o código. Entrega só com nota mínima 4 em todos. Revisão humana final do dono do negócio."
+  },
+  {
+   "objecao": "O QA depende de o usuário lembrar de pedir screenshot e Lighthouse pelo MCP. Nada fica registrado de forma repetível, então a qualidade varia de um site para outro. A meta de JS de 50 KB e o limite de 150 KB para o hero também não são checados automaticamente.",
+   "gravidade": "media",
+   "correcao_proposta": "Criar um script npm run qa com Playwright (dependência local) que sobe o preview, gera screenshots em 320, 375, 768 e 1440 dentro de qa/<data>/, roda @axe-core/playwright e falha se houver violação séria. Também checa overflow horizontal, soma o JS de dist/ e o tamanho do hero, e valida o JSON-LD com um parse simples. Rodar Lighthouse CI (lhci) com asserts de performance 90 e acessibilidade, SEO e boas práticas 95. Guardar o relatório no repositório do cliente como prova para entregar. O MCP de DevTools fica para diagnóstico. Metas próprias continuam marcadas como estimativa."
+  },
+  {
+   "objecao": "As regras de publicidade profissional quase todas estão 'não reverificado' ou 'não verificado' (CFP, CRC, CREF, CAU, CRMV, estética e todas as ordens portuguesas). Mesmo assim o plano já tem playbook e CTA para esses nichos. Um exemplo: o CTA 'Agende sua aula grátis' e preço em contabilidade podem esbarrar em regra do conselho, e ninguém conferiu.",
+   "gravidade": "alta",
+   "correcao_proposta": "No início, vender só para nichos em que a norma foi lida na fonte primária pelo próprio usuário. Cada docs/nichos/*.md ganha um cabeçalho 'status_normativo: verificado em DD/MM/AAAA, link, artigo' ou 'bloqueado'. A skill novo-cliente recusa nicho bloqueado. Para advocacia (Provimento 205/2021) e saúde, ler o texto e resumir numa lista de proibido e obrigatório. Isso não substitui parecer jurídico: combinar revisão com um advogado de cada país antes de escalar."
+  },
+  {
+   "objecao": "Faltam no fluxo elementos de conversão que um site de pequeno negócio precisa: CTA fixo no mobile, prova social real vinda do Google, prova de confiança acima da dobra, medição de cliques no WhatsApp e telefone, e mensagem wa.me com origem. Sem medir, dá para dizer ao cliente que o site é rápido, mas não que ele traz contato.",
+   "gravidade": "alta",
+   "correcao_proposta": "Incluir no template: barra fixa inferior no mobile com WhatsApp e Ligar; no hero, nota e número de avaliações do Google Business Profile (dado real e datado, sem marcar aggregateRating); cidade e bairro no H1; horário de hoje visível; mensagem wa.me com origem (ex.: 'Olá, vim pelo site'), para o cliente saber de onde veio o contato. Medir cliques em wa.me e tel: com evento sem cookies (Cloudflare Web Analytics não tem eventos personalizados, isso não foi verificado; alternativa: redirecionamento /whatsapp num Worker que conta o acesso). Entregar ao cliente um relatório mensal de contatos."
+  },
+  {
+   "objecao": "A diferença entre Brasil e Portugal ficou só no vocabulário. O tom (Portugal mais sóbrio), a tipografia e o tratamento ('você' em Portugal) ainda são estimativa, e a revisão humana de pt-PT depende de um brasileiro, que não consegue perceber um pt-BR escondido no texto.",
+   "gravidade": "media",
+   "correcao_proposta": "Em docs/locale/pt-PT.md, listar termos proibidos (celular, contato, cadastro, tela, time, 'você' direto, gerúndio progressivo 'estamos atendendo'). Criar um script que procura esses termos no dist/ de sites PT e faz o build falhar. Pedir ao cliente português ou a um revisor nativo pago que aprove o texto por escrito. Aceitar que o tom sóbrio em Portugal é hipótese e testar com os primeiros clientes."
+  },
+  {
+   "objecao": "Fotos reais do cliente são obrigatórias, mas o plano não diz o que fazer quando elas são ruins. Na prática, as fotos de celular do pequeno negócio é que definem se o site parece amador, mais do que o código.",
+   "gravidade": "media",
+   "correcao_proposta": "Colocar no briefing um guia de fotos (luz natural, horizontal e vertical, lista de cenas por nicho, sem pessoas sem autorização). Oferecer sessão fotográfica como adicional pago ou parceria local. Se as fotos forem ruins, usar layout tipográfico com pouca foto em vez de preencher com banco de imagem ou IA. Padronizar a cor com um preset único por cliente, sem inventar cenas."
+  },
+  {
+   "objecao": "Ninguém mediu se o Claude erra menos em Astro 7 que em outras opções: a pesquisa diz 'não sei'. O Astro trocou de versão major duas vezes em 3 meses, e o endereço do MCP de docs não foi verificado. A confiança de 0,85 está alta demais.",
+   "gravidade": "media",
+   "correcao_proposta": "Fazer o teste que a própria pesquisa sugere: gerar 3 sites de nicho no template e anotar build quebrado, correções manuais e tempo. Colocar no CLAUDE.md exemplos de código correto (golden files) de cada componente, que valem mais que uma lista de proibições. Travar a versão exata no package.json e testar o MCP com 'claude mcp list' antes de confiar nele. Se o erro passar de um limite combinado, avaliar a versão anterior estável."
+  },
+  {
+   "objecao": "O plano contradiz a si mesmo no CLAUDE.md. O alerta manda fixar '<ClientRouter /> nunca <ViewTransitions />', e a stack descarta o ClientRouter por padrão. A IA pode entender isso como ordem para usar o ClientRouter.",
+   "gravidade": "baixa",
+   "correcao_proposta": "Escrever no CLAUDE.md: 'Transições entre páginas: só @view-transition { navigation: auto; } em CSS. Não usar <ClientRouter /> nem <ViewTransitions /> (este foi removido no Astro 6).'"
+  },
+  {
+   "objecao": "A página de agradecimento do formulário e o link wa.me não têm fallback. Se o Web3Forms estourar o limite (que não foi confirmado), os leads se perdem sem aviso, e isso bate direto na promessa de vender.",
+   "gravidade": "media",
+   "correcao_proposta": "Usar o WhatsApp e o tel: como CTA principal e deixar o formulário como opção. Colocar um monitor mensal (tarefa agendada) que envia um formulário de teste por cliente e confere se o e-mail chegou. Conferir no navegador o preço e o limite do Web3Forms antes do primeiro cliente e anotar a data em docs/infra.md."
+  }
+ ]
+}

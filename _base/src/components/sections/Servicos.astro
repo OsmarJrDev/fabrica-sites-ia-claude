@@ -1,0 +1,79 @@
+---
+// Tres variantes: "grade" (cartoes), "lista" (linhas editoriais com filete)
+// e "numerada" (acordeao 01/02/03 com resumo + "ver mais" na mesma pagina).
+// A numeracao 01/02/03 da variante "numerada" organiza conteudo real (cada
+// servico tem um numero fixo e um acordeao proprio): isso e diferente do
+// padrao proibido em CLAUDE.md ("numeracao 01/02/03 sem sequencia real"),
+// que se refere a numero so decorativo, sem funcao.
+import { site } from '../../data/site';
+
+interface Props {
+  variante?: 'grade' | 'lista' | 'numerada';
+  titulo?: string;
+}
+
+const { variante = 'grade', titulo = 'Serviços' } = Astro.props;
+---
+
+<section id="servicos" class="mx-auto max-w-6xl px-6 py-16 md:py-24" aria-labelledby="servicos-titulo">
+  <h2 id="servicos-titulo" class="max-w-[24ch] font-titulo text-3xl font-semibold text-base md:text-4xl">
+    {titulo}
+  </h2>
+
+  {
+    variante === 'grade' ? (
+      <ul class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {site.servicos.map((servico) => (
+          <li class="rounded-[var(--radius-cartao)] border-t-4 border-acento bg-white/60 p-6">
+            <h3 class="font-titulo text-xl font-semibold text-base">{servico.nome}</h3>
+            <p class="mt-2 text-sm text-texto/70">{servico.descricao}</p>
+            {servico.precoAPartir && (
+              <p class="mt-3 text-sm font-semibold text-acento">a partir de {servico.precoAPartir}</p>
+            )}
+          </li>
+        ))}
+      </ul>
+    ) : variante === 'lista' ? (
+      <ul class="mt-10 divide-y divide-linha border-y border-linha">
+        {site.servicos.map((servico) => (
+          <li class="grid gap-2 py-6 md:grid-cols-[minmax(0,16ch)_1fr] md:gap-8">
+            <h3 class="font-titulo text-xl font-semibold text-base">{servico.nome}</h3>
+            <div>
+              <p class="text-texto/70">{servico.descricao}</p>
+              {servico.precoAPartir && (
+                <p class="mt-2 text-sm font-semibold text-acento">a partir de {servico.precoAPartir}</p>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <div class="mt-10 divide-y divide-linha border-y border-linha">
+        {site.servicos.map((servico, indice) => (
+          <details class="group py-6">
+            <summary class="flex cursor-pointer list-none items-start gap-5 marker:content-none">
+              <span class="font-titulo text-2xl font-semibold text-acento md:text-3xl" aria-hidden="true">
+                {String(indice + 1).padStart(2, '0')}
+              </span>
+              <span class="flex flex-1 items-center justify-between gap-4 pt-1">
+                <span class="font-titulo text-xl font-semibold text-base">{servico.nome}</span>
+                <span
+                  aria-hidden="true"
+                  class="shrink-0 text-acento transition-transform group-open:rotate-45 motion-reduce:transition-none"
+                >
+                  +
+                </span>
+              </span>
+            </summary>
+            <div class="pl-[2.75rem] md:pl-[3.25rem]">
+              <p class="mt-3 max-w-[65ch] text-texto/70">{servico.descricao}</p>
+              {servico.precoAPartir && (
+                <p class="mt-2 text-sm font-semibold text-acento">a partir de {servico.precoAPartir}</p>
+              )}
+            </div>
+          </details>
+        ))}
+      </div>
+    )
+  }
+</section>

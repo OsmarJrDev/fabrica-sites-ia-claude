@@ -1,0 +1,62 @@
+---
+// Tabela comparativa "nos vs. outras empresas". So use linhas de site.comparativo
+// com diferencial REAL e confirmado (nunca um diferencial generico so para
+// preencher a tabela). So aparece se houver pelo menos uma linha.
+import { site } from '../../data/site';
+
+interface Props {
+  titulo?: string;
+}
+
+const { titulo = 'Por que escolher a gente' } = Astro.props;
+const linhas = site.comparativo ?? [];
+const nomeEmpresa = site.nap.nomeComercial;
+---
+
+{
+  linhas.length > 0 && (
+    <section class="mx-auto max-w-6xl px-6 py-16 md:py-24" aria-labelledby="comparativo-titulo">
+      <h2 id="comparativo-titulo" class="font-titulo text-3xl font-semibold text-base md:text-4xl">
+        {titulo}
+      </h2>
+      <div class="mt-8 overflow-x-auto">
+        <table class="w-full min-w-[480px] border-collapse text-left">
+          <thead>
+            <tr class="border-b border-linha text-sm">
+              <th scope="col" class="py-3 pr-4 font-semibold text-texto/70">
+                Diferencial
+              </th>
+              <th scope="col" class="px-4 py-3 text-center font-semibold text-base">
+                {nomeEmpresa}
+              </th>
+              <th scope="col" class="px-4 py-3 text-center font-semibold text-texto/70">
+                Outras empresas
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-linha">
+            {linhas.map((linha) => (
+              <tr>
+                <td class="py-4 pr-4">{linha.diferencial}</td>
+                <td class="px-4 py-4 text-center">
+                  <span class:list={['font-semibold', linha.nos ? 'text-acento' : 'text-texto/40']} aria-hidden="true">
+                    {linha.nos ? '✓' : '×'}
+                  </span>
+                  <span class="sr-only">{linha.nos ? 'Sim' : 'Não'}</span>
+                  {linha.notaNos && <p class="mt-1 text-xs text-texto/60">{linha.notaNos}</p>}
+                </td>
+                <td class="px-4 py-4 text-center">
+                  <span class:list={['font-semibold', linha.outras ? 'text-texto/70' : 'text-texto/40']} aria-hidden="true">
+                    {linha.outras ? '✓' : '×'}
+                  </span>
+                  <span class="sr-only">{linha.outras ? 'Sim' : 'Não'}</span>
+                  {linha.notaOutras && <p class="mt-1 text-xs text-texto/60">{linha.notaOutras}</p>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  )
+}

@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+/*
+ * Tokens de design. Único lugar com cores, fontes, raio e sombra do site.
+ * Nada de hex solto em componente: use sempre as classes utilitárias do
+ * Tailwind geradas a partir destes tokens (bg-base, text-acento, font-titulo
+ * etc). Ao trocar de cliente, troque só os valores aqui e em src/data/site.ts.
+ */
+@theme {
+  --color-base: #1f4e5f;
+  --color-superficie: #f7f8f6;
+  --color-texto: #22282b;
+  /*
+   * Ajustado a partir do sálvia #8FB3A0 sugerido em docs/nichos.md: o tom
+   * original só passa em WCAG AA como decoração, não como texto sobre
+   * --color-base (contraste ~3,96:1). Este tom mais claro mede ~4,9:1 sobre
+   * --color-base e continua na mesma família de cor.
+   */
+  --color-destaque: #a3c6b5;
+  --color-acento: #e07a5f;
+  --color-linha: #d9e1dc;
+
+  /*
+   * O valor real (com a familia baixada pela Fonts API e o fallback
+   * otimizado) é injetado em runtime pelo componente <Font /> no
+   * src/layouts/Base.astro. O valor abaixo é só o fallback de build.
+   */
+  --font-titulo: 'Fraunces Fallback', serif;
+  --font-corpo: 'Inter Tight Fallback', sans-serif;
+
+  --radius-cartao: 0.75rem;
+  --shadow-cartao: 0 12px 32px -16px rgb(34 40 43 / 0.35);
+}
+
+/*
+ * Transição entre páginas só via CSS nativo (Astro 6+). Nunca usar
+ * <ViewTransitions /> nem <ClientRouter />.
+ */
+@view-transition {
+  navigation: auto;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-superficie);
+  color: var(--color-texto);
+  font-family: var(--font-corpo);
+  /*
+   * Trava de segurança contra overflow horizontal: um e-mail ou link
+   * comprido sem espaço (ex.: privacidade@democlinicaexemplo.com.br) não
+   * quebra por padrão e estoura a coluna em telas estreitas.
+   */
+  overflow-wrap: anywhere;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-titulo);
+}
+
+/* O site funciona igual sem animação: isto só remove o movimento, nunca o conteúdo. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
